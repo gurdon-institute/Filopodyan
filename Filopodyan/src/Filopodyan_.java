@@ -830,7 +830,7 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 		return ans;
 	}
 	
-	public void run(String _){
+	public void run(String arg){
 	try{
 		if(WindowManager.getImageCount()==0){
 			bgui = new BatchFilopodyan();
