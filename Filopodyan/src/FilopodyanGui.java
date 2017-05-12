@@ -327,8 +327,8 @@ private JLabel workLabel;
 	public boolean setFields(){
 	try{
 			threshold = (String)thresholdCombo.getSelectedItem();
-			mapC = (Integer)mapCombo.getSelectedItem();
-			measureC = (Integer)measureCombo.getSelectedItem();
+			mapC = Integer.valueOf((String)mapCombo.getSelectedItem());
+			measureC = Integer.valueOf((String)measureCombo.getSelectedItem());
 			try{
 				eds = Integer.parseInt(itField.getText());
 			}catch(NumberFormatException nfe){IJ.error(itField.getText()+" is not an integer.");return false;}
