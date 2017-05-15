@@ -1,0 +1,153 @@
+Bounder settings Fri Feb 10 14:05:45 GMT 2017
+Map C: 1
+Measure C: 2
+Threshold: RenyiEntropy
+Adaptive thresholding: false
+Fit tip to measure C: false
+Join fragments: false
+ED Iterations: 4
+Base back frames: 0
+LoG sigma: 2.6
+
+Filter settings-
+Min start frame: 1
+Min frames: 3
+Min max length: 1.8
+Min length change: 0.1
+Min max DCTM: 0.0
+Min max DCBM: 0.0
+Max mean waviness: 0.35
+
+Track Edits-
+ Deleted T93 to T121 from track 4
+ Updated tracks
+Deleted T1 to T1 from track 0
+Deleted T2 to T2 from track 0
+Deleted T3 to T3 from track 0
+Deleted T4 to T4 from track 0
+Deleted T5 to T5 from track 0
+Deleted T6 to T6 from track 0
+Deleted T7 to T7 from track 0
+Deleted T8 to T8 from track 0
+Deleted T9 to T9 from track 0
+Deleted T10 to T10 from track 0
+Deleted T11 to T11 from track 0
+Deleted T12 to T12 from track 0
+Deleted T13 to T13 from track 0
+Deleted T14 to T14 from track 0
+Deleted T15 to T15 from track 0
+Deleted T16 to T16 from track 0
+Deleted T17 to T17 from track 0
+Deleted T18 to T18 from track 0
+Deleted T19 to T19 from track 0
+Deleted T20 to T20 from track 0
+Deleted T21 to T21 from track 0
+Deleted T22 to T22 from track 0
+Deleted T23 to T23 from track 0
+Deleted T24 to T24 from track 0
+Deleted T25 to T25 from track 0
+Deleted T26 to T26 from track 0
+Deleted T27 to T27 from track 0
+Deleted T28 to T28 from track 0
+Deleted T29 to T29 from track 0
+Deleted T30 to T30 from track 0
+Deleted T31 to T31 from track 0
+Deleted T32 to T32 from track 0
+Deleted T33 to T33 from track 0
+Deleted T34 to T34 from track 0
+Deleted T35 to T35 from track 0
+Deleted T36 to T36 from track 0
+Deleted T37 to T37 from track 0
+Deleted T38 to T38 from track 0
+Deleted T39 to T39 from track 0
+Deleted T40 to T40 from track 0
+Deleted T41 to T41 from track 0
+Deleted T42 to T42 from track 0
+Deleted T43 to T43 from track 0
+Deleted T44 to T44 from track 0
+Deleted T45 to T45 from track 0
+Deleted T46 to T46 from track 0
+Deleted T47 to T47 from track 0
+Deleted T48 to T48 from track 0
+Deleted T49 to T49 from track 0
+Deleted T50 to T50 from track 0
+Deleted T51 to T51 from track 0
+Deleted T52 to T52 from track 0
+Deleted T53 to T53 from track 0
+Deleted T54 to T54 from track 0
+Deleted T55 to T55 from track 0
+Deleted T56 to T56 from track 0
+Deleted T57 to T57 from track 0
+Deleted T58 to T58 from track 0
+Deleted T59 to T59 from track 0
+Deleted T60 to T60 from track 0
+Deleted T61 to T61 from track 0
+Deleted T62 to T62 from track 0
+Deleted T63 to T63 from track 0
+Deleted T64 to T64 from track 0
+Deleted T65 to T65 from track 0
+Deleted T66 to T66 from track 0
+Deleted T67 to T67 from track 0
+Deleted T68 to T68 from track 0
+Deleted T69 to T69 from track 0
+Deleted T70 to T70 from track 0
+Deleted T71 to T71 from track 0
+Deleted T72 to T72 from track 0
+Deleted T73 to T73 from track 0
+Deleted T74 to T74 from track 0
+Deleted T75 to T75 from track 0
+Deleted T76 to T76 from track 0
+Deleted T77 to T77 from track 0
+Deleted T78 to T78 from track 0
+Deleted T79 to T79 from track 0
+Deleted T80 to T80 from track 0
+Deleted T81 to T81 from track 0
+Deleted T82 to T82 from track 0
+Deleted T83 to T83 from track 0
+Deleted T84 to T84 from track 0
+Deleted T85 to T85 from track 0
+Deleted T86 to T86 from track 0
+Deleted T87 to T87 from track 0
+Deleted T88 to T88 from track 0
+Deleted T89 to T89 from track 0
+Deleted T90 to T90 from track 0
+Deleted T91 to T91 from track 0
+Deleted T92 to T92 from track 0
+Deleted T93 to T93 from track 0
+Deleted T94 to T94 from track 0
+Deleted T95 to T95 from track 0
+Deleted T96 to T96 from track 0
+Deleted T97 to T97 from track 0
+Deleted T98 to T98 from track 0
+Deleted T99 to T99 from track 0
+Deleted T100 to T100 from track 0
+Deleted T101 to T101 from track 0
+Deleted T102 to T102 from track 0
+Deleted T103 to T103 from track 0
+Deleted T104 to T104 from track 0
+Deleted T105 to T105 from track 0
+Deleted T106 to T106 from track 0
+Deleted T107 to T107 from track 0
+Deleted T108 to T108 from track 0
+Deleted T109 to T109 from track 0
+Deleted T110 to T110 from track 0
+Deleted T111 to T111 from track 0
+Deleted T112 to T112 from track 0
+Deleted T113 to T113 from track 0
+Deleted T114 to T114 from track 0
+Deleted T115 to T115 from track 0
+Deleted T116 to T116 from track 0
+Deleted T117 to T117 from track 0
+Deleted T118 to T118 from track 0
+Deleted T119 to T119 from track 0
+Deleted T120 to T120 from track 0
+Updated tracks
+Index 1 changed to 0
+Index 2 changed to 1
+Index 3 changed to 2
+Index 4 changed to 3
+Index 5 changed to 4
+Index 6 changed to 5
+Index 7 changed to 6
+Index 8 changed to 7
+Updated tracks

@@ -1,0 +1,74 @@
+Bounder settings Fri Feb 10 11:04:34 GMT 2017
+Map C: 1
+Measure C: 2
+Threshold: RenyiEntropy
+Adaptive thresholding: false
+Fit tip to measure C: false
+Join fragments: false
+ED Iterations: 4
+Base back frames: 0
+LoG sigma: 2.6
+
+Filter settings-
+Min start frame: 1
+Min frames: 3
+Min max length: 1.8
+Min length change: 0.1
+Min max DCTM: 0.0
+Min max DCBM: 0.0
+Max mean waviness: 0.35
+
+Track Edits-
+Index 14 changed to 9
+Updated tracks
+Index 15 changed to 4
+Updated tracks
+Deleted T23 to T23 from track 0
+Updated tracks
+Deleted T29 to T29 from track 0
+Updated tracks
+Deleted T31 to T31 from track 0
+Updated tracks
+Deleted T30 to T30 from track 0
+Updated tracks
+Deleted T19 to T19 from track 0
+Updated tracks
+Deleted T82 to T82 from track 1
+Updated tracks
+Deleted T83 to T83 from track 1
+Updated tracks
+Deleted T85 to T85 from track 1
+Updated tracks
+Deleted T84 to T84 from track 1
+Updated tracks
+Deleted T86 to T86 from track 1
+Updated tracks
+Deleted T87 to T87 from track 1
+Updated tracks
+Deleted T82 to T101 from track 1
+Updated tracks
+Deleted T112 to T121 from track 1
+Updated tracks
+Deleted T108 to T108 from track 1
+Updated tracks
+Deleted T109 to T109 from track 1
+Updated tracks
+Deleted T97 to T97 from track 3
+Updated tracks
+Deleted T25 to T25 from track 3
+Updated tracks
+Deleted T23 to T23 from track 3
+Updated tracks
+Deleted T26 to T52 from track 3
+Updated tracks
+Deleted T104 to T104 from track 11
+Updated tracks
+Deleted T105 to T105 from track 11
+Updated tracks
+Deleted T111 to T111 from track 11
+Updated tracks
+Deleted T98 to T98 from track 3
+Updated tracks
+Deleted T52 to T68 from track 3
+Updated tracks
+Updated tracks
