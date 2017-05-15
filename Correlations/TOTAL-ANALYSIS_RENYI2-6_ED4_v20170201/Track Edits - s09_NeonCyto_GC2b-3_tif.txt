@@ -1,7 +1,0 @@
-1,2,17,17, Deleted T17 to T17 from track 2
-1,2,18,18, Deleted T18 to T18 from track 2
-1,2,19,19, Deleted T19 to T19 from track 2
-1,2,20,20, Deleted T20 to T20 from track 2
-3, Updated tracks
-1,1,28,34, Deleted T28 to T34 from track 1
-3, Updated tracks
