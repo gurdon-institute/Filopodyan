@@ -34,7 +34,6 @@ library(psych)
 # BASE SPEED RETR: 		  :med.fdcbm.retract     Median base retracting speed (fdcbm < thresh)
 # INITIAL TIP SPEED:	  :med.fdctm.initial  	Median tip speed during 0-20 s; # recoded to use fdctm (not dctm99)
 # INITIAL BASE SPEED:  	  :med.fdcbm.initial	Median base speed during 0-20 s; # recoded to use fdcbm
-# INITIAL tip move RATIO  :initial.fdctm.ratio	Median	
 # TIP PERSISTENCE(raw)	  :acf.dctm.roots		
 #	 			 (fdctm)  :acf.fdctm.roots
 
@@ -92,8 +91,6 @@ df.sel.filo.metrics <- data.frame(
 	#	med.fdcbm.initial,	
 #	med.fdB.initial,
 #	med.fdcbm.initial,
-# 	initial.fdctm.ratio1, 	# Added: 30 August 2016
-#	initial.fdctm.ratio2,
 	acf.fdctm.roots,
 	all.time.ext,
 	all.time.stall,
@@ -114,8 +111,6 @@ df.sel.filo.metrics.post10 <- data.frame(
   #	med.fdB.retract,
   #	med.fdB.initial,
   #	med.fdcbm.initial,
-  # 	initial.fdctm.ratio1, 	# Added: 30 August 2016
-  #	initial.fdctm.ratio2,
   acf.fdctm.roots * spt,
   all.time.ext.post10,
   all.time.stall.post10,
@@ -133,8 +128,6 @@ var.names <- c(
 "Base Retract med",
 #"Initial Tip Move med",
 #"Initial Base Move med",
-# "Initial Tip Move ratio 1",  # needs more thinking - why not correlated with DCTM
-# "Initial Tip Move ratio 2",
 "Tip Persistence",
 "Time Extending",
 "Time Stalling",
@@ -150,8 +143,6 @@ var.names.post10 <- c(
   "Tip Retract med (post10)",
   "Base Invas med",
   "Base Retract med",
-  # "Initial Tip Move ratio 1",  # needs more thinking - why not correlated with DCTM
-  # "Initial Tip Move ratio 2",
   "Tip Persistence",
   "Time Extending (post10)",
   "Time Stalling (post10)",
