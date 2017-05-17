@@ -385,7 +385,7 @@ stopifnot(bb == abs(min.dT))  # Number of base back-projected frames must match
 
 if(bg.corr.setting != "none") {
 	setwd(Loc.Modules)
-	source("BounderR Module 1-2_BgCorrection.R")
+	source("FilopodyanR Module 1-2_BgCorrection.R")
 }
 
 #-------------------------------------------------------------------------------

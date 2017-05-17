@@ -980,7 +980,7 @@ pirateplot(value ~ key, data = data, bty="n",
 		# Barplot: OFF
 		bar.b.o = 0,
 		# Points:
-		point.o = 0.025,
+		point.o = 0.00,  # <--- change points opacity
 		# Average line:
 		#avg.line.lwd = 0,
 				
@@ -1069,7 +1069,7 @@ dev.new(width = 5, height = 8)
 		avg.line.o = 0,
 		avg.line.lwd = 0,
 		#inf.f.o = 1,
-		inf.f.col = "grey" #as.character(cut(unlist(delta.scores), breaks = 0.5*scale.breaks, labels = curr.pal))
+		inf.f.col = "lightgrey" #as.character(cut(unlist(delta.scores), breaks = 0.5*scale.breaks, labels = curr.pal))
 		)
 	rect(par("usr")[1]-1, ybottom = -0.5, par("usr")[2]+1, ytop = 0.5, border = "#00000025")
 	mtext("Median", side = 2, at = 0, cex = 0.8, srt = 90, line = 1)
