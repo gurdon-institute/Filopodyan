@@ -1,16 +1,18 @@
 # Filopodyan
-An ImageJ/R pipeline for filopodia dynamics analysis
+*An ImageJ/R pipeline for filopodia dynamics analysis.*
 
-For the accompanying manuscript, see:
+For the accompanying manuscript (preprint), see:
 
-Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia. bioRxiv doi: https://doi.org/10.1101/138610
+Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia. *bioRxiv* doi: https://doi.org/10.1101/138610
 
 ## Fiji plugin for detecting, tracking and quantifying filopodia
 
-The plugin is supplied as a .jar file ([Filopodyan_.jar](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan_.jar)). Please refer to the associated user guide ([Filopodyan User Guide.docx](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan%20User%20Guide.docx)) for information on plugin installation, instructions for use and practical advice.
+The plugin is supplied as a .jar file ([Filopodyan_.jar](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan_.jar)). 
+
+Please refer to the associated user guide ([Filopodyan User Guide.docx](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan%20User%20Guide.docx)) for information on plugin installation, instructions for use and practical advice.
 
 
-## FilopodyanR - downstream analysis of filopodia dynamic properties and fluorescence
+## FilopodyanR - downstream analysis of filopodia properties and fluorescence
 
 To facilitate downstream analysis, we provide our suite of R scripts for downstream analysis of filopodia properties and fluorescence. Familiarity with R is required. Filepaths, imaging parameters and thresholds for analysis need adjusting to suit specific needs as indicated in code comments. 
 
