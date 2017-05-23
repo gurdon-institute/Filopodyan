@@ -8,7 +8,6 @@ import ij.Prefs;
 import ij.gui.Line;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
-import ij.plugin.RoiEnlarger;
 import ij.process.ImageProcessor;
 
 public class ProcessProcessor{
@@ -114,7 +113,7 @@ private static final int MAX_ITERATIONS = 10;
 					if(minLine.getLength()==0){continue;}	//don't join if the line doesn't exist
 					IJ.run(map, "Line to Area", "");
 					Roi fillRoi = map.getRoi();
-					fillRoi = RoiEnlarger.enlarge(fillRoi,2);	//make longer as well as setting a width
+					fillRoi = RoiEnlargerHandler.enlarge(fillRoi,2);	//make longer as well as setting a width
 					ip.fill(fillRoi);
 				}
 			

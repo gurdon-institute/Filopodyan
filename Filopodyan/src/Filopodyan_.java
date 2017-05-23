@@ -28,7 +28,6 @@ import ij.measure.ResultsTable;
 import ij.plugin.Duplicator;
 import ij.plugin.ImageCalculator;
 import ij.plugin.PlugIn;
-import ij.plugin.RoiEnlarger;
 import ij.process.ByteProcessor;
 import ij.process.ImageStatistics;
 
@@ -184,10 +183,10 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				if(map.getRoi()!=null){ //check again after making inverse - NullPointerException reported by user, could not replicate
 					ShapeRoi inverseRoi = new ShapeRoi( map.getRoi() );
 					frameBackgroundRoiArray[t] = inverseRoi;
-					frameBackgroundRoiArray[t].setPosition(t);
-					ShapeRoi enlarged = new ShapeRoi( RoiEnlarger.enlarge(signalRoi, 20) );
+					frameBackgroundRoiArray[t].setPosition(1, 1, t);
+					ShapeRoi enlarged = new ShapeRoi( RoiEnlargerHandler.enlarge(signalRoi, 20) );
 					boundaryBackgroundRoiArray[t] = enlarged.xor((ShapeRoi) signalRoi);
-					boundaryBackgroundRoiArray[t].setPosition(t);
+					boundaryBackgroundRoiArray[t].setPosition(1, 1, t);
 					map.killRoi();
 				}
 			}
@@ -302,7 +301,7 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 					}
 				}
 			}
-			bodyRoi.setPosition(t);
+			bodyRoi.setPosition(bgui.mapC,1,t);
 			bodyRoi.setStrokeColor(Color.MAGENTA);
 			bodyRoiArr[t-1] = bodyRoi;
 			
@@ -328,7 +327,7 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 			bodyRT.setValue("Boundary Background",tablei,boundaryBackgroundStats.mean);
 
 			PointRoi bodyCentroid = new PointRoi(rr.x+(rr.width/2),rr.y+(rr.height/2));
-			bodyCentroid.setPosition(t);
+			bodyCentroid.setPosition(bgui.mapC,1,t);
 			bodyCentroid.setStrokeColor(Color.MAGENTA);
 			ol.add(bodyCentroid);
 			
@@ -344,11 +343,11 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				imp.setRoi(split[f]);
 				double area = imp.getStatistics().area;
 				double projMean = imp.getStatistics().mean;
-				ShapeRoi grow = new ShapeRoi(RoiEnlarger.enlarge(split[f],3));
+				ShapeRoi grow = new ShapeRoi(RoiEnlargerHandler.enlarge(split[f],3));
 				ShapeRoi baseRoi = grow.and(bodyRoi);
 				
 				
-				baseRoi.setPosition(t);
+				baseRoi.setPosition(0,1,t);
 				baseRoi.setStrokeColor(Color.YELLOW);
 				imp.setRoi(baseRoi);
 				double baseMean = imp.getStatistics().mean;		
@@ -364,7 +363,7 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				IJ.run(tipMeasure, "Create Selection", "");
 				double tipThMean = tipMeasure.getStatistics().mean;	//mean of Otsu thresholded values in tip ROI			
 				tipMeasure.close();
-				tipRoi.setPosition(t);
+				tipRoi.setPosition(0,1,t);
 				tipRoi.setStrokeColor(Color.GREEN);
 				
 				Roi processRoi = (Roi)new ShapeRoi(split[f]).or(new ShapeRoi(tipRoi));
@@ -373,13 +372,13 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 					int n = 0;
 					while(processRoi.getType()==Roi.COMPOSITE&&n<15){
 						if(bgui.verbose){bgui.log.print(title, "composite join "+n);}
-						processRoi = RoiEnlarger.enlarge(processRoi,n);
-						processRoi = RoiEnlarger.enlarge(processRoi,-n);
+						processRoi = RoiEnlargerHandler.enlarge(processRoi,n);
+						processRoi = RoiEnlargerHandler.enlarge(processRoi,-n);
 						n++;
 					}
 				}
 				
-				processRoi.setPosition(t);
+				processRoi.setPosition(0,1,t);
 				processRoi.setStrokeColor(Color.CYAN);
 				
 				timeFilo.add( new Filopart(processRoi,(Roi)baseRoi,tipRoi,pixelW,t,ind,area,baseMean,projMean,tipMean,tipThMean,bgui.sigma) );
@@ -482,6 +481,7 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 		firstTrackIndex = Integer.MAX_VALUE;
 		for(int t=0;t<filo.size();t++){	//make overlay
 			if(bodyRoiArr[t]==null||filo==null||filo.size()==0){continue;}
+			bodyRoiArr[t].setPosition(0,1,t+1);
 			ol.add(bodyRoiArr[t]);
 			for(int a=0;a<filo.get(t).size();a++){
 				Filopart part = filo.get(t).get(a);
@@ -489,12 +489,15 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				firstTrackIndex = (int)Math.min(firstTrackIndex, part.index);
 				String str = String.valueOf(part.index);
 				
+				part.roi.setPosition(0,1,t+1);
+				part.base.setPosition(0,1,t+1);
+				part.tip.setPosition(0,1,t+1);
 				ol.add(part.roi);
 				ol.add(part.base);
 				ol.add(part.tip);
 				
 				TextRoi label = new TextRoi( part.baseCoord.x/pixelW, part.baseCoord.y/pixelW, str, labelFont );
-				label.setPosition(t+1);
+				label.setPosition(0,1,t+1);
 				label.setStrokeColor(Color.CYAN);
 				ol.add(label);
 			}
@@ -586,14 +589,20 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 										tipThMeanArr[t] = part.tipThMean;
 
 										imp.setPosition(bgui.measureC, 1, t);
-										Roi tipBackgroundRoi = new ShapeRoi(RoiEnlarger.enlarge( part.tip, 5 )).xor( new ShapeRoi(part.tip) ).not( new ShapeRoi(part.roi) ).not( new ShapeRoi(bodyRoiArr[t] ));
+										Roi tipBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.tip, 5 )).xor( new ShapeRoi(part.tip) ).not( new ShapeRoi(part.roi) ).not( new ShapeRoi(bodyRoiArr[t] ));
 										if(tipBackgroundRoi!=null){
 											imp.setRoi(tipBackgroundRoi);
 											localTipBackgroundArr[t] = imp.getStatistics().mean;
 											tipBackgroundRoi.setPosition(t+1);
 											localBackgroundRois.add(tipBackgroundRoi);
 										}
-										Roi baseBackgroundRoi = new ShapeRoi(RoiEnlarger.enlarge( part.base, 5 )).xor( new ShapeRoi(part.base) ).not( new ShapeRoi(part.roi) ).not( new ShapeRoi(bodyRoiArr[t] ));
+										Roi baseBackgroundRoi = null;
+										try{
+											baseBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.base, 5 ))
+																											.xor( new ShapeRoi(part.base) )
+																											.not( new ShapeRoi(part.roi) )
+																											.not( new ShapeRoi(bodyRoiArr[t] ));
+										}catch(IllegalArgumentException iae){}	//ignore exception caused by zero area ShapeRoi, baseBackgroundRoi remains null
 										if(baseBackgroundRoi!=null){
 											imp.setRoi(baseBackgroundRoi);
 											localBaseBackgroundArr[t] = imp.getStatistics().mean;
@@ -644,7 +653,7 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 												baseCoordArr[t+back] = new Point2d(backX*pixelW,backY*pixelW);
 												dtArr[t+back] = back;
 
-												baseBackgroundRoi = new ShapeRoi(RoiEnlarger.enlarge( backBase, 5 )).xor( (ShapeRoi)backBase ).not( new ShapeRoi(bodyRoiArr[t+back] ));
+												baseBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( backBase, 5 )).xor( (ShapeRoi)backBase ).not( new ShapeRoi(bodyRoiArr[t+back] ));
 												if(baseBackgroundRoi!=null){
 													imp.setRoi(baseBackgroundRoi);
 													localBaseBackgroundArr[t+back] = imp.getStatistics().mean;

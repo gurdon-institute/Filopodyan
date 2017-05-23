@@ -75,7 +75,7 @@ private int kymoWidth = 1000;
 					signalMax = Math.max(signalMax,sf);
 					signalMin = Math.min(signalMin,sf);
 					Roi innerMarker = new Roi(poly.xpoints[i]-0.5d,poly.ypoints[i]-0.5d,1d,1d);
-					innerMarker.setPosition(t);
+					innerMarker.setPosition(bgui.measureC,1,t);
 					signalOl.add(innerMarker);
 					
 					//adaptive velocity
@@ -89,7 +89,7 @@ private int kymoWidth = 1000;
 					IJ.run(imp, "Select None", "");
 					double gradient = ((pixb1-pix0)/2) + ((pix0-pixf1)/2);
 					Roi marker = new Roi(poly.xpoints[i]-0.5d,poly.ypoints[i]-0.5d,1d,1d);
-					marker.setPosition(t);
+					marker.setPosition(bgui.measureC,1,t);
 					float vf = new Float(gradient);
 					velocity.add(vf);
 					meanV[t] += vf;

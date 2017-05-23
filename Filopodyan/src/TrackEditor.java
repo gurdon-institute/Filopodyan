@@ -46,7 +46,7 @@ import javax.swing.SwingUtilities;
 import ij.IJ;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
-import ij.plugin.RoiEnlarger;
+
 
 public class TrackEditor{
 private JFrame gui;
@@ -616,7 +616,7 @@ private TrackEdits edits;
 										this.cancel();
 									}
 									else{
-										sel = new ShapeRoi(RoiEnlarger.enlarge(sel, 0d+n));
+										sel = new ShapeRoi(RoiEnlargerHandler.enlarge(sel, n));
 										sel.setStrokeColor(Color.YELLOW);
 										parent.imp.setPosition(0,4,startNode.t+1);
 										parent.imp.setRoi(sel);
