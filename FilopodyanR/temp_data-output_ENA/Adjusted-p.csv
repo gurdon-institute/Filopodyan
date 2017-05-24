@@ -1,0 +1,14 @@
+"","var","Mann.Whitney","adj.Bonf","adj.Holm"
+"1","max.lengths",0.865838998976928,1,1
+"2","straightness.at.max.over5",0.739790943635894,1,1
+"3","med.rate.extens",0.963411826234775,1,1
+"4","med.rate.retract",0.0302231396777466,0.392900815810706,0.392900815810706
+"5","med.fdcbm.invas",0.117217150189607,1,1
+"6","med.fdcbm.retract",0.164580930585798,1,1
+"7","all.time.ext",0.983385989021403,1,1
+"8","all.time.retr",0.88792273369963,1,1
+"9","all.time.stall",0.629289492850613,1,1
+"10","all.time.base.inv",0.615355253351688,1,1
+"11","all.time.base.retr",0.179719365052683,1,1
+"12","all.time.base.stable",0.144272077824283,1,1
+"13","acf.fdctm.roots",0.26603164505473,1,1
