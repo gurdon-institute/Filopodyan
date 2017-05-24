@@ -55,7 +55,7 @@ private static final long serialVersionUID = 9710347002937l;
 public JCheckBox boundaryTick, tipPlotTick, filoTableTick, coordTableTick, bodyTableTick, kymographsTick,
 				 ccfTick, basePlotTick, timeTick, verboseTick, adaptiveTick, fitTick, joinTick, showBackgroundTick;
 public JToggleButton advTick;
-public JComboBox<String> mapCombo, measureCombo, thresholdCombo;
+public JComboBox mapCombo, measureCombo, thresholdCombo; //compiled to java 1.6 for compatibility, JComboBox didn't take a type arg back in the day
 public JTextField itField, sigmaField, weightField, dWField, oWField, backField;
 public JSlider timeSlider;
 public SwingWorker<Object, Void> workGui;
@@ -229,17 +229,17 @@ private JLabel workLabel;
 		
 		JPanel mapPanel = new JPanel();
 		mapPanel.add(new JLabel("Map C"));
-		mapCombo = new JComboBox<String>(chans);
+		mapCombo = new JComboBox(chans);
 		mapCombo.setSelectedItem(mapC);
 		mapPanel.add(mapCombo);
 		JPanel measurePanel = new JPanel();
 		measurePanel.add(new JLabel("Measure C"));
-		measureCombo = new JComboBox<String>(chans);
+		measureCombo = new JComboBox(chans);
 		measureCombo.setSelectedItem(measureC);
 		measurePanel.add(measureCombo);
 		add(makePanel(BASIC, mapPanel, measurePanel, advPan));
 		
-		thresholdCombo = new JComboBox<String>(methods);
+		thresholdCombo = new JComboBox(methods);
 		thresholdCombo.setSelectedItem(threshold);
 		add( makePanel(BASIC, new JLabel("Threshold: ",JLabel.RIGHT), thresholdCombo) );
 		adaptiveTick = new JCheckBox("",adaptive);

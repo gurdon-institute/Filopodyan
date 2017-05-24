@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
-import javax.vecmath.Point2d;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -49,7 +48,7 @@ private Roi[] frameBackgroundRoiArray;
 private Roi[] boundaryBackgroundRoiArray;
 private ArrayList<Roi> localBackgroundRois;
 private double[] bodyMean;
-private static final double defaultPixelW = 0.065;
+private static final double defaultPixelW = 0.065; //Vasja's 63x objective
 private static final Font labelFont = new Font(Font.MONOSPACED,Font.BOLD,14);
 public boolean batch = false;
 private static final Color frameBackgroundColor = new Color(0, 0, 255, 32);
@@ -365,23 +364,33 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				tipMeasure.close();
 				tipRoi.setPosition(0,1,t);
 				tipRoi.setStrokeColor(Color.GREEN);
-				
+	
 				Roi processRoi = (Roi)new ShapeRoi(split[f]).or(new ShapeRoi(tipRoi));
-				
+				Roi clone = (Roi)processRoi.clone();
 				if(processRoi.getType()==Roi.COMPOSITE){
 					int n = 0;
 					while(processRoi.getType()==Roi.COMPOSITE&&n<15){
-						if(bgui.verbose){bgui.log.print(title, "composite join "+n);}
+						if(bgui.verbose){bgui.log.print(title, "composite join "+n+" Roi length = "+processRoi.getLength());}
+						if(processRoi.getLength()<1){processRoi = clone; break;}
 						processRoi = RoiEnlargerHandler.enlarge(processRoi,n);
+						if(processRoi==null){
+							processRoi = clone;
+							break;
+						}
+						if(processRoi.getLength()<1){processRoi = clone; break;}
 						processRoi = RoiEnlargerHandler.enlarge(processRoi,-n);
+						if(processRoi==null){
+							processRoi = clone;
+							break;
+						}
 						n++;
+						if(processRoi.getLength()<1){processRoi = clone; break;}
 					}
 				}
-				
 				processRoi.setPosition(0,1,t);
 				processRoi.setStrokeColor(Color.CYAN);
-				
-				timeFilo.add( new Filopart(processRoi,(Roi)baseRoi,tipRoi,pixelW,t,ind,area,baseMean,projMean,tipMean,tipThMean,bgui.sigma) );
+				Filopart fp = new Filopart(processRoi,(Roi)baseRoi,tipRoi,pixelW,t,ind,area,baseMean,projMean,tipMean,tipThMean,bgui.sigma);
+				timeFilo.add( fp );
 			}
 			filo.add(timeFilo);
 		}
@@ -481,7 +490,9 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 		firstTrackIndex = Integer.MAX_VALUE;
 		for(int t=0;t<filo.size();t++){	//make overlay
 			if(bodyRoiArr[t]==null||filo==null||filo.size()==0){continue;}
-			bodyRoiArr[t].setPosition(0,1,t+1);
+			int index1D = t+1;//imp.getStackIndex(1, 1, t+1); //inconsistent behaviour
+			//bodyRoiArr[t].setPosition(0,1,t+1);
+			bodyRoiArr[t].setPosition(index1D);
 			ol.add(bodyRoiArr[t]);
 			for(int a=0;a<filo.get(t).size();a++){
 				Filopart part = filo.get(t).get(a);
@@ -489,15 +500,20 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				firstTrackIndex = (int)Math.min(firstTrackIndex, part.index);
 				String str = String.valueOf(part.index);
 				
-				part.roi.setPosition(0,1,t+1);
-				part.base.setPosition(0,1,t+1);
-				part.tip.setPosition(0,1,t+1);
+				
+				//part.roi.setPosition(0,1,t+1);
+				part.roi.setPosition(index1D);
+				//part.base.setPosition(0,1,t+1);
+				part.base.setPosition(index1D);
+				//part.tip.setPosition(0,1,t+1);
+				part.tip.setPosition(index1D);
 				ol.add(part.roi);
 				ol.add(part.base);
 				ol.add(part.tip);
 				
 				TextRoi label = new TextRoi( part.baseCoord.x/pixelW, part.baseCoord.y/pixelW, str, labelFont );
-				label.setPosition(0,1,t+1);
+				//label.setPosition(0,1,t+1);
+				label.setPosition(index1D);
 				label.setStrokeColor(Color.CYAN);
 				ol.add(label);
 			}

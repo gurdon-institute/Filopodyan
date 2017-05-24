@@ -1,7 +1,7 @@
 import java.awt.Rectangle;
+import java.util.Arrays;
 
-import javax.vecmath.Point2d;
-
+import ij.IJ;
 import ij.gui.Roi;
 
 public class Filopart{
@@ -11,7 +11,17 @@ public class Filopart{
 	double pixW,area,baseMean,projMean,tipMean,tipThMean,joinCost,dctm,dcbm,sigma,length;
 	Point2d baseCoord, tipCoord;
 	
+	@Deprecated //used only for testing
+	public static Filopart create(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
+		Filopart part = null;
+		try{
+			part = new Filopart(r, base, tip, pixW, t, i, a, meanB, meanP, meanT, meanThT, sigma);
+		}catch(Throwable bad){IJ.log(bad.toString()+"\n~~~~~\n"+Arrays.toString(bad.getStackTrace()).replace(",","\n"));}
+		return part;
+	}
+	
 	public Filopart(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
+		try{
 		this.roi = r;
 		this.pixW = pixW;
 		this.T = t;
@@ -32,9 +42,11 @@ public class Filopart{
 		this.dcbm = 0d;
 		this.sigma = sigma;
 		this.length = Double.NaN;
+		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
 	public Filopart(Filopart copy){
+		try{
 		this.roi = (Roi)copy.roi.clone();
 		this.pixW = copy.pixW;
 		this.T = copy.T;
@@ -53,9 +65,11 @@ public class Filopart{
 		this.dcbm = copy.dcbm;
 		this.sigma = copy.sigma;
 		this.length = copy.length;
+		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
 	public double getLength(){	//estimate length as half perimeter corrected for width
+		try{
 		if(Double.isNaN(length)){
 			double w = 2 * Math.sqrt(2*Math.log(2)) * sigma * pixW;
 			double EC = ((Math.PI - 2)/2) * w;
@@ -63,6 +77,7 @@ public class Filopart{
 			double SF = Math.min( ((D/w)*(D/w)), 1d );
 			length = ((roi.getLength()/2)*pixW) - (EC * SF);
 		}
+		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 		return length;
 	}
 	
