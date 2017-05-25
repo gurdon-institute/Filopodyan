@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ public JFrame frame;
 private JTabbedPane pane;
 private String path = Prefs.get("FilopodyanLog.path", System.getProperty("user.home"));
 private static final String DEFAULT_TAB = "log";
+private static final FileNameExtensionFilter filter = new FileNameExtensionFilter("Filopodyan Log", "txt", "text");
 private static FilopodyanLog instance;
 
 	private FilopodyanLog(){
@@ -100,11 +102,35 @@ private static FilopodyanLog instance;
 		return pane;
 	}
 	
+	private boolean properOS(){
+		String name = System.getProperty("os.name").toLowerCase();
+		if(name.matches(".*?mac.*?")){
+			return false;
+		}
+		return true;
+	}
+	
+	private void saveLog(int tabIndex){
+		if(properOS()){
+			saveLogJ(tabIndex);
+		}
+		else{
+			iSaveLog(tabIndex);
+		}
+	}
 	private void saveAllLogs(){
+		if(properOS()){
+			saveAllLogsJ();
+		}
+		else{
+			iSaveAllLogs();
+		}
+	}
+	
+	private void saveAllLogsJ(){
 	try{
 		int tabCount = pane.getTabCount();
 		JFileChooser fc = new JFileChooser(path);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Filopodyan Log", "txt", "text");
 		fc.setFileFilter(filter);
 		fc.setDialogTitle("Save All Logs...");
 		fc.setApproveButtonText("Save All");
@@ -120,12 +146,12 @@ private static FilopodyanLog instance;
 				sanTitle = sanTitle.replaceAll("\\.", "_");
 				IJ.saveString(logStr, path+File.separator+sanTitle+".txt");
 			}
+			Prefs.set("FilopodyanLog.path", path);
 		}
-		Prefs.set("FilopodyanLog.path", path);
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	private void saveLog(int tabIndex){
+	private void saveLogJ(int tabIndex){
 	try{
 		int tabCount = pane.getTabCount();
 		if(tabIndex>tabCount-1||tabIndex<0){
@@ -133,7 +159,6 @@ private static FilopodyanLog instance;
 			return;
 		}
 		JFileChooser fc = new JFileChooser(path);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Filopodyan Log", "txt", "text");
 		fc.setFileFilter(filter);
 		fc.setDialogTitle("Save Current Log...");
 		fc.setApproveButtonText("Save");
@@ -151,6 +176,51 @@ private static FilopodyanLog instance;
 				path += ".txt";
 			}
 			IJ.saveString(logStr, path);
+			Prefs.set("FilopodyanLog.path", path);
+		}
+	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
+	}
+	
+	private void iSaveLog(int tabIndex){
+	try{
+		FileDialog fd = new FileDialog(frame, "Save Current Log...");
+		String sanTitle = pane.getTitleAt(tabIndex);
+		sanTitle = sanTitle.replaceAll("\\.", "_");
+		fd.setFile(path+File.separator+sanTitle+".txt");
+		fd.setVisible(true);
+		String dir = "";
+		if((dir = fd.getDirectory()) != null){
+			path = dir+File.separator+fd.getFile();
+			JScrollPane scroll = (JScrollPane) pane.getSelectedComponent();
+			JTextPane textPane = (JTextPane) scroll.getViewport().getView();
+			Document doc = textPane.getDocument();
+			String logStr = doc.getText(0,doc.getLength());
+			if(!path.endsWith(".txt")){
+				path += ".txt";
+			}
+			IJ.saveString(logStr, path);
+			Prefs.set("FilopodyanLog.path", path);
+		}
+	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
+	}
+	private void iSaveAllLogs(){
+	try{
+		int tabCount = pane.getTabCount();
+		FileDialog fd = new FileDialog(frame, "Save All Logs...");
+		fd.setDirectory(path);
+		fd.setVisible(true);
+		String dir = "";
+		if((dir = fd.getDirectory()) != null){
+			String path = dir;
+			for(int i=0;i<tabCount;i++){
+				JScrollPane scroll = (JScrollPane) pane.getComponentAt(i);
+				JTextPane textPane = (JTextPane) scroll.getViewport().getView();
+				Document doc = textPane.getDocument();
+				String logStr = doc.getText(0,doc.getLength());
+				String sanTitle = pane.getTitleAt(i);
+				sanTitle = sanTitle.replaceAll("\\.", "_");
+				IJ.saveString(logStr, path+File.separator+sanTitle+".txt");
+			}
 			Prefs.set("FilopodyanLog.path", path);
 		}
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
