@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 
 # This script forms part of a set of analysis scripts for quantifying dynamic 
-# behaviour of filopodia with the Fiji plugin CAD-Bounder. 
+# behaviour of filopodia with the Fiji plugin Filopodyan. 
 
 # More information available from: vu203@cam.ac.uk. 
 
@@ -12,7 +12,7 @@
 
 
 # This script implements background correction for fluorescence measurements.
-# Downstream of (sourced by) 'BounderR Module 1_v20170201.R'
+# Downstream of (sourced by) 'Filopodyan Module 1.R'
 
 #------------------------
 # REQUIRED SCRIPT INPUT:
