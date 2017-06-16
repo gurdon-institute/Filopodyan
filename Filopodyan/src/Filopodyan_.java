@@ -54,6 +54,7 @@ public boolean batch = false;
 private static final Color frameBackgroundColor = new Color(0, 0, 255, 32);
 private static final Color boundaryBackgroundColor = new Color(255, 0, 0, 32);
 private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
+private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
 
 	public void setImageVisible(final boolean v){
 	try{
@@ -182,10 +183,17 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				if(map.getRoi()!=null){ //check again after making inverse - NullPointerException reported by user, could not replicate
 					ShapeRoi inverseRoi = new ShapeRoi( map.getRoi() );
 					frameBackgroundRoiArray[t] = inverseRoi;
-					frameBackgroundRoiArray[t].setPosition(1, 1, t);
+					
 					ShapeRoi enlarged = new ShapeRoi( RoiEnlargerHandler.enlarge(signalRoi, 20) );
 					boundaryBackgroundRoiArray[t] = enlarged.xor((ShapeRoi) signalRoi);
-					boundaryBackgroundRoiArray[t].setPosition(1, 1, t);
+					if(INDEX1D){
+						frameBackgroundRoiArray[t].setPosition(t);
+						boundaryBackgroundRoiArray[t].setPosition(t);
+					}
+					else{
+						frameBackgroundRoiArray[t].setPosition(1, 1, t);
+						boundaryBackgroundRoiArray[t].setPosition(1, 1, t);
+					}
 					map.killRoi();
 				}
 			}
@@ -233,14 +241,24 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 			if(body.getRoi()!=null){
 				bodyRoi = body.getRoi();
 				bodyRoi.setStrokeColor(Color.RED);
-				bodyRoi.setPosition(0,0,tStart);
+				if(INDEX1D){
+					bodyRoi.setPosition(tStart);
+				}
+				else{
+					bodyRoi.setPosition(0,0,tStart);
+				}
 				prevol.add(bodyRoi);
 			}
 			IJ.run(proj, "Create Selection", "");
 			if(proj.getRoi()!=null){
 				Roi projRoi = proj.getRoi();
 				projRoi.setStrokeColor(Color.PINK);
-				projRoi.setPosition(0,0,tStart);
+				if(INDEX1D){
+					projRoi.setPosition(tStart);
+				}
+				else{
+					projRoi.setPosition(0,0,tStart);
+				}
 				prevol.add(projRoi);
 			}
 			imp.setOverlay(prevol);
@@ -300,7 +318,12 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 					}
 				}
 			}
-			bodyRoi.setPosition(bgui.mapC,1,t);
+			if(INDEX1D){
+				bodyRoi.setPosition(t);
+			}
+			else{
+				bodyRoi.setPosition(bgui.mapC,1,t);
+			}
 			bodyRoi.setStrokeColor(Color.MAGENTA);
 			bodyRoiArr[t-1] = bodyRoi;
 			
@@ -326,7 +349,13 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 			bodyRT.setValue("Boundary Background",tablei,boundaryBackgroundStats.mean);
 
 			PointRoi bodyCentroid = new PointRoi(rr.x+(rr.width/2),rr.y+(rr.height/2));
-			bodyCentroid.setPosition(bgui.mapC,1,t);
+			
+			if(INDEX1D){
+				bodyCentroid.setPosition(t);
+			}
+			else{
+				bodyCentroid.setPosition(bgui.mapC,1,t);
+			}
 			bodyCentroid.setStrokeColor(Color.MAGENTA);
 			ol.add(bodyCentroid);
 			
@@ -346,7 +375,13 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				ShapeRoi baseRoi = grow.and(bodyRoi);
 				
 				
-				baseRoi.setPosition(0,1,t);
+				
+				if(INDEX1D){
+					baseRoi.setPosition(t);
+				}
+				else{
+					baseRoi.setPosition(0,1,t);
+				}
 				baseRoi.setStrokeColor(Color.YELLOW);
 				imp.setRoi(baseRoi);
 				double baseMean = imp.getStatistics().mean;		
@@ -363,6 +398,12 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 				double tipThMean = tipMeasure.getStatistics().mean;	//mean of Otsu thresholded values in tip ROI			
 				tipMeasure.close();
 				tipRoi.setPosition(0,1,t);
+				if(INDEX1D){
+					tipRoi.setPosition(t);
+				}
+				else{
+					tipRoi.setPosition(0,1,t);
+				}
 				tipRoi.setStrokeColor(Color.GREEN);
 	
 				Roi processRoi = (Roi)new ShapeRoi(split[f]).or(new ShapeRoi(tipRoi));
@@ -388,6 +429,12 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 					}
 				}
 				processRoi.setPosition(0,1,t);
+				if(INDEX1D){
+					processRoi.setPosition(t);
+				}
+				else{
+					processRoi.setPosition(0,1,t);
+				}
 				processRoi.setStrokeColor(Color.CYAN);
 				Filopart fp = new Filopart(processRoi,(Roi)baseRoi,tipRoi,pixelW,t,ind,area,baseMean,projMean,tipMean,tipThMean,bgui.sigma);
 				timeFilo.add( fp );
@@ -491,29 +538,37 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 		for(int t=0;t<filo.size();t++){	//make overlay
 			if(bodyRoiArr[t]==null||filo==null||filo.size()==0){continue;}
 			int index1D = t+1;//imp.getStackIndex(1, 1, t+1); //inconsistent behaviour
-			//bodyRoiArr[t].setPosition(0,1,t+1);
-			bodyRoiArr[t].setPosition(index1D);
+			if(INDEX1D){
+				bodyRoiArr[t].setPosition(index1D);
+			}
+			else{
+				bodyRoiArr[t].setPosition(0,1,t+1);
+			}
+			
 			ol.add(bodyRoiArr[t]);
 			for(int a=0;a<filo.get(t).size();a++){
 				Filopart part = filo.get(t).get(a);
 				if(part.index==-1){continue;}
 				firstTrackIndex = (int)Math.min(firstTrackIndex, part.index);
 				String str = String.valueOf(part.index);
+				TextRoi label = new TextRoi( part.baseCoord.x/pixelW, part.baseCoord.y/pixelW, str, labelFont );
 				
-				
-				//part.roi.setPosition(0,1,t+1);
-				part.roi.setPosition(index1D);
-				//part.base.setPosition(0,1,t+1);
-				part.base.setPosition(index1D);
-				//part.tip.setPosition(0,1,t+1);
-				part.tip.setPosition(index1D);
+				if(INDEX1D){
+					part.roi.setPosition(index1D);
+					part.base.setPosition(index1D);
+					part.tip.setPosition(index1D);
+					label.setPosition(index1D);
+				}
+				else{
+					part.roi.setPosition(0,1,t+1);
+					part.base.setPosition(0,1,t+1);
+					part.tip.setPosition(0,1,t+1);
+					label.setPosition(0,1,t+1);
+				}
 				ol.add(part.roi);
 				ol.add(part.base);
 				ol.add(part.tip);
-				
-				TextRoi label = new TextRoi( part.baseCoord.x/pixelW, part.baseCoord.y/pixelW, str, labelFont );
-				//label.setPosition(0,1,t+1);
-				label.setPosition(index1D);
+
 				label.setStrokeColor(Color.CYAN);
 				ol.add(label);
 			}
@@ -609,7 +664,12 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 										if(tipBackgroundRoi!=null){
 											imp.setRoi(tipBackgroundRoi);
 											localTipBackgroundArr[t] = imp.getStatistics().mean;
-											tipBackgroundRoi.setPosition(t+1);
+											if(INDEX1D){
+												tipBackgroundRoi.setPosition(t+1);
+											}
+											else{
+												tipBackgroundRoi.setPosition(0,1,t+1);
+											}
 											localBackgroundRois.add(tipBackgroundRoi);
 										}
 										Roi baseBackgroundRoi = null;
@@ -622,7 +682,12 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 										if(baseBackgroundRoi!=null){
 											imp.setRoi(baseBackgroundRoi);
 											localBaseBackgroundArr[t] = imp.getStatistics().mean;
-											baseBackgroundRoi.setPosition(t+1);
+											if(INDEX1D){
+												baseBackgroundRoi.setPosition(t+1);
+											}
+											else{
+												baseBackgroundRoi.setPosition(0,1,t+1);
+											}
 											localBackgroundRois.add(baseBackgroundRoi);
 										}
 
@@ -673,15 +738,32 @@ private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 												if(baseBackgroundRoi!=null){
 													imp.setRoi(baseBackgroundRoi);
 													localBaseBackgroundArr[t+back] = imp.getStatistics().mean;
-													baseBackgroundRoi.setPosition(t+back+1);
+													
+													if(INDEX1D){
+														baseBackgroundRoi.setPosition(t+back+1);
+													}
+													else{
+														baseBackgroundRoi.setPosition(0,1,t+back+1);
+													}
 													localBackgroundRois.add(baseBackgroundRoi);
 												}
 
-												backBase.setPosition(t+back+1);
+												if(INDEX1D){
+													backBase.setPosition(t+back+1);
+												}
+												else{
+													backBase.setPosition(0,1,t+back+1);
+												}
 												backBase.setStrokeColor(Color.ORANGE);
 												backRoi.add(backBase);
 												TextRoi backLabel = new TextRoi(backX,backY,""+i,labelFont);
-												backLabel.setPosition(t+back+1);
+												
+												if(INDEX1D){
+													backLabel.setPosition(t+back+1);
+												}
+												else{
+													backLabel.setPosition(0,1,t+back+1);
+												}
 												backLabel.setStrokeColor(Color.ORANGE);
 												backRoi.add(backLabel);
 											}
