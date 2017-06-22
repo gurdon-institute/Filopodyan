@@ -177,6 +177,9 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		for(int t=1;t<=map.getNFrames();t++){
 			map.setPosition(1, 1, t);
 			IJ.run(map, "Create Selection", "");
+			if(map.getStatistics().mean<=0.0001){
+				IJ.run(map, "Make Inverse", "");
+			}
 			if(map.getRoi()!=null){
 				Roi signalRoi = new ShapeRoi( map.getRoi() );
 				IJ.run(map, "Make Inverse", "");
