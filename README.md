@@ -1,9 +1,9 @@
 # Filopodyan
 *An ImageJ/R pipeline for filopodia dynamics analysis.*
 
-For the accompanying manuscript (preprint), see:
+For the accompanying manuscript, see:
 
-Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia. *bioRxiv* doi: https://doi.org/10.1101/138610
+Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia. http://jcb.rupress.org/content/216/10/3405 DOI: 10.1083/jcb.201705113
 
 ## Fiji plugin for detecting, tracking and quantifying filopodia
 
