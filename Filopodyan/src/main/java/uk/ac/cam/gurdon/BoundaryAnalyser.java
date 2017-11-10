@@ -14,18 +14,29 @@ import ij.gui.ShapeRoi;
 import ij.plugin.Duplicator;
 import ij.process.FloatProcessor;
 
-
+/** Calculates and creates visualisations of local boundary shapes and velocities.
+ * 
+ * @author Richard Butler
+ */
 public class BoundaryAnalyser{
 private FilopodyanGui bgui;
 private ImagePlus imp;	
 private int kymoWidth = 1000;
 
+	/**
+	 * @param bgui	The FilopodyanGui containing parameters
+	 * @param imp	The ImagePlus from which Filoparts to be visualised were acquired
+	 */
 	public BoundaryAnalyser(FilopodyanGui bgui, ImagePlus imp){
 		this.bgui = bgui;
 		this.imp = imp;
 	}
-
 	
+	/** Create the visualisations specified in the FilopodyanGui
+	 * 
+	 * @param filo	The Filopart Collection to be visualised. This is a List of timepoints each having a List of FiloParts.
+	 * @param bodyRoiArr	The growth cone body Rois to be visualised.
+	 */
 	public void run(ArrayList<ArrayList<Filopart>> filo,ShapeRoi[] bodyRoiArr){
 	try{
 		int T = imp.getNFrames();

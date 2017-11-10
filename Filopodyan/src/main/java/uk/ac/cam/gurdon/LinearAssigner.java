@@ -7,17 +7,34 @@ import ij.ImagePlus;
 import ij.gui.ShapeRoi;
 import ij.process.ImageStatistics;
 
+/** A simple method to assign filopodium identity over time
+ * 
+ * @author Richard Butler
+ */
 public class LinearAssigner{
 private ImagePlus imp;
 private int maxI;
 private boolean verbose;
 
+	/** 
+	 * @param imp	the image from which the filopodia were mapped
+	 * 	@param verbose	true to log additional information
+ 	*/
 	public LinearAssigner(ImagePlus imp,boolean verbose){
 		this.imp = imp;
 		imp.getNFrames();
 		this.verbose = verbose;
 	}
 
+	/** Run the linear asignment algorithm. A fast 1-step algorithm is used since the same cost for two links is very unlikely using the formula:
+	 * cost = ((distance between bases + distance between tips) / sqrt(overlap area)) * time difference
+	 * 
+	 * Links are assigned by setting the Filopart track index fields
+	 * 
+	 * @param filo	The Filopart Collection for assignment. This is a List of timepoints each having a List of FiloParts.
+	 * @see Filopart
+	 * @return The Filopart Collection with track indices assigned for convenience
+	 */
 	public ArrayList<ArrayList<Filopart>> run(ArrayList<ArrayList<Filopart>> filo){
 		assign(filo);
 		return filo;
@@ -43,7 +60,6 @@ private boolean verbose;
 		return cost;
 	}
 	
-	//simple linear assignment using 1-step algorithm since the same cost for two links is very unlikely
 	private void assign(ArrayList<ArrayList<Filopart>> filo){
 	try{
 		maxI = -1;

@@ -51,6 +51,10 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
 
+/** The main GUI and parameter store for Filopodyan.
+ * 
+ * @author Richard Butler
+ */
 public class FilopodyanGui extends JDialog implements ActionListener, ChangeListener{
 private static final long serialVersionUID = 9710347002937l;
 public JCheckBox boundaryTick, tipPlotTick, filoTableTick, coordTableTick, bodyTableTick, kymographsTick,
@@ -134,9 +138,14 @@ private static final int ADVANCED = 1;
 public static final String[] methods = {"Triangle","Otsu","MaxEntropy","RenyiEntropy","Huang"};
 private JLabel workLabel;
 
+	/** Default constructor overriden by BatchFilopodyan*/
+	public FilopodyanGui(){}
 
-	public FilopodyanGui(){}	//default constructor, overriden by BatchFilopodyan
-
+	/** Standard constuctor for non-batch mode GUI
+	 * 
+	 * 	@param parent	the parent Filopodyan PlugIn instance
+	 * 	@param imp	the ImagePlus to be analysed
+	 */
 	public FilopodyanGui(Filopodyan_ parent,ImagePlus imp){
 	try{
 		this.parent = parent;
@@ -179,7 +188,9 @@ private JLabel workLabel;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	public void makeFrame(){	//start making the frame, completed and displayed by the single stack constructor or batch method
+	/** Create components used in both normal and batch modes without displaying anything. Completed and displayed by the single stack constructor or batch method
+	 */
+	public void makeFrame(){
 		setTitle("Filopodyan");
 		setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("logo_icon.gif")));
@@ -285,6 +296,8 @@ private JLabel workLabel;
 		setAdvancedMode();
 	}
 	
+	/** Disable CheckBoxes if the CheckBoxes for their prerequisite analysis are not selected.
+	 */
 	public void enableCheck(){
 		boolean fitting = fitTick.isSelected();
 		boundaryTick.setEnabled(!fitting);
@@ -301,6 +314,8 @@ private JLabel workLabel;
 		}
 	}
 	
+	/**	Save parameters in ij.Prefs
+	 */
 	public void setPrefs(){
 	try{
 		Prefs.set("Filopodyan.mapC",mapC);
@@ -325,6 +340,10 @@ private JLabel workLabel;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Get values from Components
+	 * 
+	 * @return	true - previous versions could return false, current implementation throws Exceptions for bad parameters instead.
+	 */
 	public boolean setFields(){
 	try{
 			threshold = (String)thresholdCombo.getSelectedItem();
@@ -374,6 +393,10 @@ private JLabel workLabel;
 		return true;
 	}
 	
+	/** Set HTML text on the working information label
+	 * 
+	 * @param text	Text to be displayed, will be wrapped in /&lt;html&gt;..&lt;/html&gt; so HTML tags can be included
+	 */
 	public void setLabel(String text){
 		if(workLabel!=null&&text!=null){
 			try{
@@ -382,6 +405,8 @@ private JLabel workLabel;
 		}
 	}
 	
+	/** Show the work frame to indicate that Filopodyan is running and provide an abort button.
+	 */
 	public void showWorkFrame(){
 		if(workFrame==null){
 			workFrame = new JFrame("Filopodyan");
@@ -434,6 +459,8 @@ private JLabel workLabel;
 		workFrame.setVisible(true);
 	}
 	
+	/** Display help in a frame
+	 */
 	public void showHelp(){
 		if(helpFrame==null){
 			helpFrame = new JFrame();
@@ -489,6 +516,8 @@ private JLabel workLabel;
 		helpFrame.setVisible(true);
 	}
 	
+	/** Send a string containing current detection settings to the FilopodyanLog
+	 */
 	public void logSettings(){
 		setPrefs();
 		String str ="Filopodyan settings "+(new Date().toString())+"\n"+
@@ -529,6 +558,8 @@ private JLabel workLabel;
 		return panel;
 	}
 	
+	/** Set visibility of components based on whether advanced mode is enabled
+	 */
 	public void setAdvancedMode(){
 		for(Component comp : advList){
 			comp.setVisible(advMode);
@@ -536,6 +567,7 @@ private JLabel workLabel;
 		pack();
 	}	
 	
+	@Override
 	public void actionPerformed(ActionEvent ae){
 	try{
 		String event = ae.getActionCommand();
@@ -597,6 +629,7 @@ private JLabel workLabel;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	@Override
 	public void stateChanged(ChangeEvent ce){
 		enableCheck();
 	}

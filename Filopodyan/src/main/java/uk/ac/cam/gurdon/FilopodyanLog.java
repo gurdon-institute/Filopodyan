@@ -25,6 +25,11 @@ import javax.swing.text.Document;
 import ij.IJ;
 import ij.Prefs;
 
+/** Singleton class to show logs in a tabbed frame to keep separate logs for different images.
+ *  Get the instance with the static get() method.
+ *  
+ *  @author Richard Butler
+ */
 public class FilopodyanLog{
 public JFrame frame;
 private JTabbedPane pane;
@@ -92,6 +97,10 @@ private static FilopodyanLog instance;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Get the singleton FilopodyanLog instance
+	 * 
+	 * @return The FilopodyanLog instance, creating it if necessary
+	 */
 	public static FilopodyanLog get(){
 	try{
 		if(instance==null){ instance = new FilopodyanLog(); }
@@ -99,6 +108,10 @@ private static FilopodyanLog instance;
 		return instance;
 	}
 	
+	/** Get the JTabbedPane
+	 * 
+	 * @return	the JTabbedPane containing any logs
+	 */
 	public JTabbedPane getPane(){
 		return pane;
 	}
@@ -227,6 +240,8 @@ private static FilopodyanLog instance;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Ask if logs should be saved if tabs exist
+	 */
 	public void closeCheck(){
 	try{
 		int tabCount = pane.getTabCount();
@@ -238,19 +253,34 @@ private static FilopodyanLog instance;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Set the visibility of the JFrame
+	 * 
+	 * @param vis	frame visibility
+	 */
 	public void setVisible(boolean vis){
 		frame.setVisible(vis);
 	}
 	
+	/** Dispose the JFrame
+	 */
 	public void dispose(){
 		frame.dispose();
 		instance = null;
 	}
 	
+	/** Add text to the default tab
+	 * 
+	 * @param txt	Text to be appended to the default tab log
+	 */
 	public void print(String txt){
 		print(DEFAULT_TAB, txt);
 	}
 	
+	/** Add text to a log, creates the log in a new tab if it doesn't already exist
+	 * 
+	 * @param title	The title of the log tab to append txt to
+	 * @param txt	Text to be appended to the log
+	 */
 	public void print(String title, String txt){
 	try{
 		int tabi = pane.indexOfTab(title);
@@ -272,6 +302,11 @@ private static FilopodyanLog instance;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Add text to a log, creates the log in a new tab if it doesn't already exist
+	 * 
+	 * @param title	The title of the log tab to append txt to
+	 * @param list	An ArrayList of String items to be appended to the log
+	 */
 	public void print(String title, ArrayList<String> list){
 		for(String line:list){
 			print(title, line);

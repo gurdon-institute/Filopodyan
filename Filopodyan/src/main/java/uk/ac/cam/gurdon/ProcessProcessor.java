@@ -11,6 +11,10 @@ import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import ij.process.ImageProcessor;
 
+/** Joins fragmented parts into a continuous binary mask
+ * 
+ * @author Richard Butler
+ */
 public class ProcessProcessor{
 private ImageProcessor ip;
 private static final int MAX_ITERATIONS = 10;
@@ -34,7 +38,7 @@ private static final int MAX_ITERATIONS = 10;
 		
 	}
 	
-	public Tople joinCost(Roi a,Roi b){
+	private Tople joinCost(Roi a,Roi b){
 		Tople result = new Tople();
 	try{
 		Polygon polyA = a.getPolygon();
@@ -60,7 +64,11 @@ private static final int MAX_ITERATIONS = 10;
 		return result;
 	}
 	
-
+	/** Attempts to joins fragments in the input binary mask into a continuous mask by adding lines between the nearest points on the fragment boundaries
+	 * 
+	 *  @param map	the input mask, will be processed in place
+	 *  @return	the input map after processing (for convenience)
+	 */
 	public ImagePlus join(ImagePlus map){
 		ip = map.getProcessor();
 		ip.setColor(Color.WHITE);

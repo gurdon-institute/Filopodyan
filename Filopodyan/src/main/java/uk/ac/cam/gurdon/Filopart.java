@@ -5,6 +5,10 @@ import java.util.Arrays;
 import ij.IJ;
 import ij.gui.Roi;
 
+/** Represents a 2-dimensional filopodium. Stores Rois, time and part indices, coordinates and statistics.
+ * 
+ * @author Richard Butler
+ */
 public class Filopart{
 	Roi roi,base,tip;
 	int T;
@@ -12,7 +16,22 @@ public class Filopart{
 	double pixW,area,baseMean,projMean,tipMean,tipThMean,joinCost,dctm,dcbm,sigma,length;
 	Point2d baseCoord, tipCoord;
 	
-	@Deprecated //used only for testing
+	/** Used for testing, the non-static Filopart constuctor should be used instead.
+	 * 
+	 * @param r	The process Roi
+	 * @param base	The process base Roi
+	 * @param tip	The process tip Roi
+	 * @param pixW	The calibrated pixel width
+	 * @param t	The timepoint that this process exists at
+	 * @param i	The index of this process
+	 * @param a	The process area in units^2
+	 * @param meanB The base mean intensity
+	 * @param meanP The process mean intensity
+	 * @param meanT The tip mean intensity
+	 * @param meanThT The thresholded mean intensity
+	 * @param sigma	The Gaussian sigma value used to detect this process 
+	 */
+	@Deprecated
 	public static Filopart create(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
 		Filopart part = null;
 		try{
@@ -21,6 +40,21 @@ public class Filopart{
 		return part;
 	}
 	
+	/** Constuctor taking Rois and values to be stored
+	 * 
+	 * @param r	The process Roi
+	 * @param base	The process base Roi
+	 * @param tip	The process tip Roi
+	 * @param pixW	The calibrated pixel width
+	 * @param t	The timepoint that this process exists at
+	 * @param i	The index of this process
+	 * @param a	The process area in units^2
+	 * @param meanB The base mean intensity
+	 * @param meanP The process mean intensity
+	 * @param meanT The tip mean intensity
+	 * @param meanThT The thresholded mean intensity
+	 * @param sigma	The Gaussian sigma value used to detect this process 
+	 */
 	public Filopart(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
 		try{
 		this.roi = r;
@@ -46,6 +80,10 @@ public class Filopart{
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Construct a Filopart containing the same Rois and values as another.
+	 * 
+	 * @param copy	The Filopart to copy
+	 */
 	public Filopart(Filopart copy){
 		try{
 		this.roi = (Roi)copy.roi.clone();
@@ -69,7 +107,11 @@ public class Filopart{
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	public double getLength(){	//estimate length as half perimeter corrected for width
+	/** Estimate the length of this filopodium as half perimeter corrected for width
+	 * 
+	 * @return	The estimated length
+	 */
+	public double getLength(){
 		try{
 		if(Double.isNaN(length)){
 			double w = 2 * Math.sqrt(2*Math.log(2)) * sigma * pixW;

@@ -12,7 +12,10 @@ import java.util.Iterator;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
+/** Store edits made to tracks in TrackEditor and allows sequences of edits to be saved and loaded.
+ * 
+ * @author Richard Butler
+ */
 public class TrackEdits{
 
 private TrackEditor editor;
@@ -21,6 +24,9 @@ private ArrayList<String> list;
 private String imageTitle;
 private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.home"));
 
+	/** edit operations: change, delete, restore and update
+	 *  contains methods for convenient generation of human-readable Strings
+	 */
 	public static enum Op{
 		CHANGE(0), DELETE(1), RESTORE(2), UPDATE(3);
 		int i;
@@ -59,6 +65,10 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 		
 	}
 
+	/** @param editor	The TrackEditor used to get and apply edits
+	 *  @param log	The FilopodyanLog for logging edits
+	 *  @param imageTitle	The title of the FilopodyanLog tab to use
+	 */
 	public TrackEdits(TrackEditor editor, FilopodyanLog log, String imageTitle){
 		this.editor = editor;
 		this.log = log;
@@ -67,6 +77,10 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 		log.print(imageTitle, "Track Edits-");
 	}
 	
+	/** Add an edit to the list of operations and log it as comma delimited ints to save/apply and in human-readable form
+	 * 
+	 * @param edit	The Op representing the type of edit
+	 */
 	public void add(Op edit){
 		String op = ""+edit.getInt()+", "+edit.getString();
 		list.add(op);
@@ -74,6 +88,13 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 		log.print("Track Edits - "+imageTitle,op);
 	}
 	
+	/** Add an edit to the list of operations and log it as comma delimited ints to save/apply and in human-readable form
+	 * 
+	 * @param edit	The Op representing the type of edit
+	 * @param from	The index changed from
+	 * @param to	The index changed to
+	 * @param min	true if the smaller index should be assigned, false to allow a larger index to be set
+	 */
 	public void add(Op edit, int from, int to, boolean min){
 		String op = edit.getInt()+","+from+","+to+","+(min?"1":"0")+", "+edit.getString(from, to);
 		list.add(op);
@@ -81,6 +102,13 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 		log.print("Track Edits - "+imageTitle,op);
 	}
 	
+	/** Add an edit to the list of operations and log it as comma delimited ints to save/apply and in human-readable form
+	 * 
+	 * @param edit	The Op representing the type of edit
+	 * @param track	The index of the edited track
+	 * @param t1	The first timepoint edited
+	 * @param t2	The last timepoint edited
+	 */
 	public void add(Op edit, int track, int t1, int t2){
 		String op = edit.getInt()+","+track+","+t1+","+t2+", "+edit.getString(track, t1, t2);
 		list.add(op);
@@ -88,6 +116,8 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 		log.print("Track Edits - "+imageTitle,op);		//applyable form including readable form
 	}
 	
+	/** Load a sequence of edits from a text file
+	 */
 	public void load(){
 	try{
 		list = new ArrayList<String>();
@@ -111,6 +141,8 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
+	/** Apply the current list of edits to the tracks in the TrackEditor
+	 */
 	public void apply(){
 	try{
 		editor.tracklog = false;

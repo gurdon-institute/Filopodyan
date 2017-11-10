@@ -48,7 +48,10 @@ import ij.IJ;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 
-
+/** A tool allowing manual editing of Filopart tracks
+ * 
+ * @author Richard Butler
+ */
 public class TrackEditor{
 private JFrame gui;
 private JPanel panel, holder;
@@ -119,6 +122,11 @@ private TrackEdits edits;
 		}
 	}
 
+	/** Create the TrackEditor for a collection of Filoparts
+	 * 
+	 * @param f	The Filopart Collection to be edited. This is a List of timepoints each having a List of FiloParts.
+	 * @param par	The parent Filopodyan PlugIn
+	 */
 	public TrackEditor(ArrayList<ArrayList<Filopart>> f,Filopodyan_ par){
 	try{
 		this.filo = f;
@@ -155,6 +163,12 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Change the index of a track. Tries to reassign all Filopart indices, shows an error and returns to the original indices if the change would give a duplicate index.
+	*
+	*	@param from	The track index to be changed
+	*	@param to	The new index to assign
+	*	@param min	true if the smaller index should be assigned, false to allow a larger index to be set
+	 */
 	public void change(int from, int to, boolean min){
 	try{
 		if(from!=to){
@@ -196,6 +210,8 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Update the JScrollPane and the parent Filopart Collection
+	 */
 	public void update(){
 		if(scroll!=null){	//if the panel has already been constructed
 			gui.remove(scroll);
@@ -207,6 +223,12 @@ private TrackEdits edits;
 		if(tracklog){ edits.add(TrackEdits.Op.UPDATE); }
 	}
 	
+	/** Delete Filoparts from a track specified by track and time indices
+	 * 
+	 * @param trackI	The index of the track to delete from
+	 * @param t1	The first time index to delete
+	 * @param t2	The last time index to delete
+	 */
 	public void delete(int trackI, int t1, int t2){
 	try{
 		if(t1<1){t1=1;}
@@ -224,6 +246,12 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Delete Filoparts from a track specified by a PartNode
+	 * 
+	 * @param del	The PartNode representing a Filopart to delete
+	 * @param wholeTrack	true to delete the whole track that this PartNode belongs to, false to delete only this PartNode
+	 * @param confirm	true to show a confirm dialog before deleting a part or track, false to delete without confirmation
+	 */
 	public void delete(PartNode del,boolean wholeTrack,boolean confirm){
 	try{
 		if(!wholeTrack){
@@ -281,6 +309,8 @@ private TrackEdits edits;
 		}
 	}
 	
+	/** Organise the track indices from smallest to largest starting at 0 and removing any gaps
+	 */
 	public void sequentialise(){
 	try{
 		if(parent.bgui.verbose){FilopodyanLog.get().print(parent.imp.getTitle(), "Sequentialising track indices");}
@@ -302,9 +332,10 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Restore the unedited Filopart Collection
+	 */
 	public void restore(){
 	try{
-		//reset filo and remake original lists with FiloPart copying constructor
 		filo = original;
 		original = new ArrayList<ArrayList<Filopart>>();
 		for(int t=0;t<filo.size();t++){
@@ -339,6 +370,8 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Create and show the TrackEditor Frame and controls
+	 */
 	public void run(){
 	try{
 		gui = new JFrame("Edit Tracks");

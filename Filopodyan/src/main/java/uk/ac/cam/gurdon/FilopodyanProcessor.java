@@ -11,9 +11,23 @@ import ij.plugin.filter.Convolver;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
+/** Processes an images to create a binary mask
+ * 
+ * @author Richard Butler
+ */
 public class FilopodyanProcessor{
 
-//LoG - returns a mask created by LoG processing and thresholding using the sigma and autothreshold method values given as arguments
+/**LoG processing
+ * 
+ * @param imp	the image to process, not changed by the processing
+ * @param chan	the channel to process
+ * @param t0	the start index of the time range to process (inclusive)
+ * @param t1	the end index of the time range to process (inclusive)
+ * @param sigma	the Gaussian sigma value
+ * @param threshold	the ImageJ thresholding method to use to create the binary mask from the processed image
+ * @param verbose	true to log additional information including the LoG kernel
+ * @return	a mask created by LoG processing and thresholding using the sigma and autothreshold method values given as arguments
+ * */
 public ImagePlus LoG(ImagePlus imp, int chan, int t0, int t1, double sigma, String threshold, boolean verbose){
 	
 	ImagePlus map = new Duplicator().run(imp,chan,chan, 1, 1, t0, t1);
@@ -45,7 +59,17 @@ public ImagePlus LoG(ImagePlus imp, int chan, int t0, int t1, double sigma, Stri
 	return map;
 }
 
-//adaptive local thresholding	
+/** Adaptive Local Thresholding using directional LoG processing. Pre-processes with the ImageJ rolling ball.
+ * 
+ * @param imp	the image to process, not changed by the processing
+ * @param chan	the channel to process
+ * @param t0	the start index of the time range to process (inclusive)
+ * @param t1	the end index of the time range to process (inclusive)
+ * @param sigma	the Gaussian sigma value for directional LoG kernels, rolling ball radius is set to 10*sigma
+ * @param threshold	the ImageJ thresholding method to use to create the binary mask from the processed image
+ * @param verbose	true to log additional information including the directional LoG kernels
+ * @return	a mask created by LoG processing and thresholding using the sigma and autothreshold method values given as arguments
+ */
 public ImagePlus ALT(ImagePlus imp, int chan, int t0, int t1, String threshold, double sigma, boolean verbose){
 		ImagePlus map = new Duplicator().run(imp,chan,chan, 1, 1, t0, t1);
 		IJ.run(map, "Subtract Background...", "rolling="+(sigma*10)+" stack");

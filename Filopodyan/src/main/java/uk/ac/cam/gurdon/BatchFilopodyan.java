@@ -1,24 +1,4 @@
 package uk.ac.cam.gurdon;
-/* 
-	//Minimal class for testing
-
-import ij.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
-public class BatchFilopodyan extends FilopodyanGui{
-AtomicInteger count = new AtomicInteger();
-int start, frames, length, dl;
-double dctm, waviness;
-
-	public BatchFilopodyan(){
-		this.log = FilopodyanLog.get();
-	}
-	
-	public void createDialog(){
-		IJ.log("BatchFilopodyan dialog goes here");
-	}
-} 
-*/
 
 
 import java.awt.Color;
@@ -44,6 +24,11 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
 
+/**{@inheritDoc} 
+ * Extends FilopodyanGui to provide a GUI for running Filopodyan on a folder of images with pre-defined parameters.
+ * 
+ * @author Richard Butler
+ */
 public class BatchFilopodyan extends FilopodyanGui implements ActionListener{
 private static final long serialVersionUID = 123412341234l;
 private JTextField startField, framesField, lengthField, dlField, dctmField, dcbmField, wavinessField;
@@ -59,6 +44,7 @@ public String path = Prefs.get("Filopodyan.path",System.getProperty("user.home")
 public AtomicInteger count;
 private Timer timer;
 
+	/** Constructor, loads previous parameters or sets defaults.*/
 	public BatchFilopodyan(){
 	try{
 		this.boundaryAnalysis = Prefs.get("Filopodyan.boundaryAnalysis",false);
@@ -83,6 +69,9 @@ private Timer timer;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Creates the batch mode dialog, calls FilopodyanGui.makeFrame() and adds additonal fields to take filter parameters,
+	 * @see FilopodyanGui
+	 */
 	public void createDialog(){
 	try{
 		makeFrame();
@@ -95,16 +84,16 @@ private Timer timer;
 		filterPanel.add(new JLabel("Min frames",JLabel.RIGHT));
 		framesField = new JTextField(""+frames,3);
 		filterPanel.add(framesField);
-		filterPanel.add(new JLabel("Min max length (µm)",JLabel.RIGHT));
+		filterPanel.add(new JLabel("Min max length (ï¿½m)",JLabel.RIGHT));
 		lengthField = new JTextField(""+length,3);
 		filterPanel.add(lengthField);
-		filterPanel.add(new JLabel("Min length change (µm)",JLabel.RIGHT));
+		filterPanel.add(new JLabel("Min length change (ï¿½m)",JLabel.RIGHT));
 		dlField = new JTextField(""+dl,3);
 		filterPanel.add(dlField);
-		filterPanel.add(new JLabel("Min max DCTM (µm)",JLabel.RIGHT));
+		filterPanel.add(new JLabel("Min max DCTM (ï¿½m)",JLabel.RIGHT));
 		dctmField = new JTextField(""+dctm,3);
 		filterPanel.add(dctmField);
-		filterPanel.add(new JLabel("Min max DCBM (µm)",JLabel.RIGHT));
+		filterPanel.add(new JLabel("Min max DCBM (ï¿½m)",JLabel.RIGHT));
 		dcbmField = new JTextField(""+dcbm,3);
 		filterPanel.add(dcbmField);
 		filterPanel.add(new JLabel("Max mean waviness",JLabel.RIGHT));
@@ -253,6 +242,8 @@ private Timer timer;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
+	/** A Runnable to run Filopodyan on an image file. Submitted to an ExecutorService to analyse multiple images in parallel.
+	 */
 	public class Batch implements Runnable{
 		private File file;
 		private BatchFilopodyan bb;

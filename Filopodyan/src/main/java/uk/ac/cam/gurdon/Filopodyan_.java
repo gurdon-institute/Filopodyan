@@ -34,6 +34,14 @@ import ij.plugin.PlugIn;
 import ij.process.ByteProcessor;
 import ij.process.ImageStatistics;
 
+/**
+ * An ImageJ PlugIn for filopodia dynamics analysis.
+ *
+ * For the accompanying manuscript, see:
+ * Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia. http://jcb.rupress.org/content/216/10/3405 DOI: 10.1083/jcb.201705113
+ *
+ * @author Richard Butler
+ */
 public class Filopodyan_ implements PlugIn{
 public ImagePlus imp;
 private ImagePlus map,body,proj;
@@ -60,6 +68,10 @@ private static final Color boundaryBackgroundColor = new Color(255, 0, 0, 32);
 private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
 private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
 
+	/** Sets visibility of the current image and runs Enhance Contrast if it is visible. Does nothing in batch mode.
+	 * 
+	 * @param v	 true to show, false to hide
+	 */
 	public void setImageVisible(final boolean v){
 	try{
 		if(batch){return;}
@@ -68,6 +80,10 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/**
+	 * Sets the image to be the target of all other operations.
+	 * @param image 	The target ImagePlus
+	 */
 	public void setImp(ImagePlus image){
 		imp = image;
 		title = imp.getTitle();
@@ -126,16 +142,22 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		return false;
 	}
 	
+	/** Detects filopodia in the image.
+	 * 
+	 * @param prev	true to run a preview, mapping only the currently displayed frame, false to run on all frames and continue to filtering and tracking
+	 * @see FilopodyanProcessor
+	 * @see ProcessProcessor
+	 * @see Tipper
+	*/	
 	public void filopodia(boolean prev){
 	try{
 		bgui.setLabel("mapping processes<br>"+title);
 		if(bgui.verbose){bgui.log.print(title, "Mapping processes in "+title);}
 		if(!prev){setImageVisible(false);}
-	/*
-	***********************************
-	*	tStart and tEnd are 1-based
-	***********************************
-	*/	
+
+		//***********************************
+		//*	  tStart and tEnd are 1-based   *
+		//***********************************
 		tStart = 1;
 		tEnd = T;
 		if(prev){
@@ -505,7 +527,10 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	
+	/** Called by FiloFilter when filters have been applied. Takes the filtered Filopart list and creates a TrackEditor.
+	 * 
+	 * @param backPass	The Filopart Collection for use in TrackEditor. This is a List of timepoints each having a List of FiloParts.
+	 */
 	public void filtered(ArrayList<ArrayList<Filopart>> backPass){
 		filo = backPass;
 		LinearAssigner LA2 = new LinearAssigner(imp,bgui.verbose);
@@ -522,11 +547,19 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		}
 	}
 	
+	/** Called by TrackEditor to output edited Tracks.
+	 * 
+	 * @param backPass	The Filopart Collection for output. This is a List of timepoints each having a List of FiloParts.
+	 */
 	public void trackEdited(ArrayList<ArrayList<Filopart>> backPass){
 		filo = backPass;
 		output(filo);
 	}
 	
+	/** Updates the Overlay and displays it on the current image.
+	 * 
+	 *  @param f	The Filopart Collection to be shown in the Overlay. This is a List of timepoints each having a List of FiloParts.
+	 */
 	public void update(ArrayList<ArrayList<Filopart>> f){
 		if(f.size()>=0){
 			filo = f;
@@ -535,6 +568,8 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		}
 	}
 	
+	/** Creates the Overlay from the current FiloParts
+	 */
 	public void doOverlay(){
 	try{
 		if(batch){return;}
@@ -603,6 +638,10 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Measures all filopodia and shows them in ResultsTables and the image Overlay.
+	 * 
+	 * @param backPass	The Filopart Collection for output. This is a List of timepoints each having a List of FiloParts.
+	 */
 	public void output(final ArrayList<ArrayList<Filopart>> backPass){
 		try{
 			if(!batch){bgui.workFrame.setVisible(true);}
@@ -931,6 +970,10 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
+	/** Checks if an image has been set for analysis.
+	 * 
+	 * @return	true if an image has been set and is visible, false otherwise
+	 */
 	public boolean gotImage(){
 		boolean ans = false;
 	try{
@@ -944,6 +987,10 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		return ans;
 	}
 	
+	/** The main entry point for the PlugIn.
+	 * 
+	 * @param arg	Does nothing
+	 */
 	public void run(String arg){
 	try{
 		if(WindowManager.getImageCount()==0){
@@ -988,7 +1035,9 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	//testing only
+	/** Used for testing only.
+	 * 	@param arg	not used
+	 * */
 	public static void main(String[] arg){
 		JFileChooser fc = new JFileChooser();
 		fc.setDialogTitle("Filopodyan test image...");

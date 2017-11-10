@@ -18,6 +18,10 @@ import ij.IJ;
 import ij.Prefs;
 import ij.measure.Calibration;
 
+/** Filters Filoparts according to user-defined parameters.
+ * 
+ * @author Richard Butler
+ */
 public class FiloFilter implements ActionListener{
 private JFrame gui;
 private JTextField startField, framesField, lengthField, dlField, wavinessField, dctmField, dcbmField;
@@ -34,6 +38,11 @@ private String unit;
 private double pixW;
 private ArrayList<ArrayList<Filopart>> filo, original;
 
+	/** 
+	 * @param filo	The Filopart Collection to be filtered. This is a List of timepoints each having a List of FiloParts.
+	 * @param maxIndex	The maximum Filopart index used in filo
+	 * @param parent	The parent Filopodyan_ PlugIn instance
+	 */
 	public FiloFilter(ArrayList<ArrayList<Filopart>> filo, int maxIndex, Filopodyan_ parent){
 	try{
 		this.filo = filo;
@@ -53,6 +62,8 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Create the GUI
+	 */
 	public void run(){
 	try{
 		if(parent.bgui.verbose){parent.bgui.log.print(parent.imp.getTitle(), "Filopodyan Filter...");}
@@ -100,6 +111,10 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
+	/** Used by BatchFilopodyan to filter Filoparts with no GUI input
+	 * 
+	 * @param bgui	The BatchFilopodyan containing filter settings
+	 */
 	public void batchFilter(BatchFilopodyan bgui){
 	try{
 		this.start = bgui.start;
@@ -177,6 +192,7 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 		return ff;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent ae){
 	try{
 		String event = ae.getActionCommand();
