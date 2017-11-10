@@ -1,14 +1,18 @@
+package uk.ac.cam.gurdon;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
@@ -982,6 +986,28 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		bgui.toFront();
 		
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
+	}
+	
+	//testing only
+	public static void main(String[] arg){
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle("Filopodyan test image...");
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	    if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+	    	String path = fc.getSelectedFile().getAbsolutePath();
+	    	ImagePlus image = new ImagePlus(path);
+			image.show();
+	    }
+		
+		final ij.ImageJ ij = new ij.ImageJ();
+		
+		ij.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent we){
+				System.exit(1);
+			}
+		});
+		
+		new Filopodyan_().run("");
 	}
 	
 }

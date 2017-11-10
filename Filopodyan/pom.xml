@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>13.0.0</version>
+		<relativePath />
+	</parent>
+  
+  <groupId>uk.ac.cam.gurdon</groupId>
+  <artifactId>Filopodyan</artifactId>
+  <version>1.0</version>
+  <name>Filopodyan</name>
+  <description>Filopodyan</description>
+  
+  <repositories>
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+	</repositories>
+  
+  	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-legacy</artifactId>	<!-- reported as unused by maven-dependency-plugin but is required to avoid ImageJ2 GUI -->
+		</dependency>
+	</dependencies>
+  
+  <url>https://www.gurdon.cam.ac.uk/</url>
+	<inceptionYear>2017</inceptionYear>
+	<organization>
+		<name>The Gurdon Institute</name>
+		<url>https://www.gurdon.cam.ac.uk/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>GNU General Public License</name>
+			<distribution>Version 3</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>rb7777</id>
+			<name>Richard Butler</name>
+			<url>https://www.gurdon.cam.ac.uk/</url>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>vu203</id>
+			<name>Vasja Urbancic</name>
+			<url>https://www.gurdon.cam.ac.uk/</url>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>name</name>
+			<url>http://imagej.net/</url>
+			<roles><role>developer</role></roles>
+			<properties><id>id</id></properties>
+		</contributor>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git://github.com/imagej/</connection>
+		<developerConnection>scm:git:git@github.com:imagej/</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/imagej/</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/imagej/</url>
+	</issueManagement>
+	<ciManagement>
+		<system>None</system>
+	</ciManagement>
+
+	<properties>
+		<package-name>uk.ac.cam.gurdon</package-name>
+		<main-class>uk.ac.cam.gurdon.Filopodyan_</main-class>
+		<license.licenseName>GNU General Public License 3</license.licenseName>
+		<license.copyrightOwners>Richard Butler</license.copyrightOwners>
+	</properties>
+  
+</project>
