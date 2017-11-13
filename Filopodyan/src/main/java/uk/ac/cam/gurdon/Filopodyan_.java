@@ -38,7 +38,7 @@ import ij.process.ImageStatistics;
  * An ImageJ PlugIn for filopodia dynamics analysis.
  *
  * For the accompanying manuscript, see:
- * Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia. http://jcb.rupress.org/content/216/10/3405 DOI: 10.1083/jcb.201705113
+ * <a href='http://jcb.rupress.org/content/216/10/3405'>Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop, J. L. 2017. Filopodyan: An Open-Source Pipeline For The Analysis Of Filopodia.</a> DOI: 10.1083/jcb.201705113
  *
  * @author Richard Butler
  */
@@ -145,6 +145,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	/** Detects filopodia in the image.
 	 * 
 	 * @param prev	true to run a preview, mapping only the currently displayed frame, false to run on all frames and continue to filtering and tracking
+	 * @see Filopart
 	 * @see FilopodyanProcessor
 	 * @see ProcessProcessor
 	 * @see Tipper
@@ -527,9 +528,12 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Called by FiloFilter when filters have been applied. Takes the filtered Filopart list and creates a TrackEditor.
+	/** Called by <code>FiloFilter</code> when filters have been applied. Takes the filtered <code>Filopart</code> list and creates a <code>TrackEditor</code>.
 	 * 
-	 * @param backPass	The Filopart Collection for use in TrackEditor. This is a List of timepoints each having a List of FiloParts.
+	 * @param backPass	The <code>Filopart</code> Collection for use in <code>TrackEditor</code>. This is a List of timepoints each having a List of <code>FiloPart</code>s.
+	 * @see FiloFilter
+	 * @see TrackEditor
+	 * @see Filopart
 	 */
 	public void filtered(ArrayList<ArrayList<Filopart>> backPass){
 		filo = backPass;
@@ -547,18 +551,22 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		}
 	}
 	
-	/** Called by TrackEditor to output edited Tracks.
+	/** Called by <code>TrackEditor</code> to output edited Tracks.
 	 * 
-	 * @param backPass	The Filopart Collection for output. This is a List of timepoints each having a List of FiloParts.
+	 * @param backPass	The <code>Filopart</code> Collection for output. This is a List of timepoints each having a List of <code>FiloPart</code>s.
+	 * @see Filopart
+	 * @see TrackEditor
 	 */
 	public void trackEdited(ArrayList<ArrayList<Filopart>> backPass){
 		filo = backPass;
 		output(filo);
 	}
 	
-	/** Updates the Overlay and displays it on the current image.
+	/** Updates the <code>Overlay</code> and displays it on the current image.
 	 * 
-	 *  @param f	The Filopart Collection to be shown in the Overlay. This is a List of timepoints each having a List of FiloParts.
+	 *  @param f	The <code>Filopart</code> Collection to be shown in the Overlay. This is a List of timepoints each having a List of FiloParts.
+	 *  @see Filopart
+	 *  @see Filopodyan_#doOverlay()
 	 */
 	public void update(ArrayList<ArrayList<Filopart>> f){
 		if(f.size()>=0){
@@ -568,7 +576,9 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		}
 	}
 	
-	/** Creates the Overlay from the current FiloParts
+	/** Creates the <code>Overlay</code> from the current <code>FiloPart</code>s
+	 * 
+	 * @see Filopart
 	 */
 	public void doOverlay(){
 	try{
@@ -638,9 +648,10 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Measures all filopodia and shows them in ResultsTables and the image Overlay.
+	/** Measures all filopodia and shows them in <code>ResultsTable</code>s and the image <code>Overlay</code>.
 	 * 
-	 * @param backPass	The Filopart Collection for output. This is a List of timepoints each having a List of FiloParts.
+	 * @param backPass	The <code>Filopart</code> Collection for output. This is a List of timepoints each having a List of <code>Filopart</code>s.
+	 * @see Filopart
 	 */
 	public void output(final ArrayList<ArrayList<Filopart>> backPass){
 		try{
@@ -973,6 +984,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	/** Checks if an image has been set for analysis.
 	 * 
 	 * @return	true if an image has been set and is visible, false otherwise
+	 * @see Filopodyan_#setImp(ImagePlus imp)
 	 */
 	public boolean gotImage(){
 		boolean ans = false;
@@ -987,10 +999,8 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 		return ans;
 	}
 	
-	/** The main entry point for the PlugIn.
-	 * 
-	 * @param arg	Does nothing
-	 */
+
+	@Override
 	public void run(String arg){
 	try{
 		if(WindowManager.getImageCount()==0){
@@ -1036,6 +1046,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	}
 	
 	/** Used for testing only.
+	 * 
 	 * 	@param arg	not used
 	 * */
 	public static void main(String[] arg){

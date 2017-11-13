@@ -138,13 +138,13 @@ private static final int ADVANCED = 1;
 public static final String[] methods = {"Triangle","Otsu","MaxEntropy","RenyiEntropy","Huang"};
 private JLabel workLabel;
 
-	/** Default constructor overriden by BatchFilopodyan*/
+	/** Default constructor overriden by <code>BatchFilopodyan</code>*/
 	public FilopodyanGui(){}
 
 	/** Standard constuctor for non-batch mode GUI
 	 * 
 	 * 	@param parent	the parent Filopodyan PlugIn instance
-	 * 	@param imp	the ImagePlus to be analysed
+	 * 	@param imp	the <code>ImagePlus</code> to be analysed
 	 */
 	public FilopodyanGui(Filopodyan_ parent,ImagePlus imp){
 	try{
@@ -296,7 +296,7 @@ private JLabel workLabel;
 		setAdvancedMode();
 	}
 	
-	/** Disable CheckBoxes if the CheckBoxes for their prerequisite analysis are not selected.
+	/** Disable <code>JCheckBox</code>es if the <code>JCheckBox</code>es for their prerequisite analysis are not selected.
 	 */
 	public void enableCheck(){
 		boolean fitting = fitTick.isSelected();
@@ -314,7 +314,7 @@ private JLabel workLabel;
 		}
 	}
 	
-	/**	Save parameters in ij.Prefs
+	/**	Save parameters in <code>ij.Prefs</code>
 	 */
 	public void setPrefs(){
 	try{
@@ -395,7 +395,7 @@ private JLabel workLabel;
 	
 	/** Set HTML text on the working information label
 	 * 
-	 * @param text	Text to be displayed, will be wrapped in /&lt;html&gt;..&lt;/html&gt; so HTML tags can be included
+	 * @param text	Text to be displayed, will be wrapped in &lt;html&gt;..&lt;/html&gt; so HTML tags can be included
 	 */
 	public void setLabel(String text){
 		if(workLabel!=null&&text!=null){
@@ -459,7 +459,7 @@ private JLabel workLabel;
 		workFrame.setVisible(true);
 	}
 	
-	/** Display help in a frame
+	/** Display help in a <code>JFrame</code>
 	 */
 	public void showHelp(){
 		if(helpFrame==null){
@@ -516,7 +516,7 @@ private JLabel workLabel;
 		helpFrame.setVisible(true);
 	}
 	
-	/** Send a string containing current detection settings to the FilopodyanLog
+	/** Send a string containing current detection settings to the <code>FilopodyanLog</code>
 	 */
 	public void logSettings(){
 		setPrefs();

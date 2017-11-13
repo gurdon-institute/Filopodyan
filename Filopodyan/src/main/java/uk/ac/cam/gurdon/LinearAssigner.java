@@ -16,10 +16,9 @@ private ImagePlus imp;
 private int maxI;
 private boolean verbose;
 
-	/** 
-	 * @param imp	the image from which the filopodia were mapped
+	/** @param imp	the image from which the filopodia were mapped
 	 * 	@param verbose	true to log additional information
- 	*/
+ 	 */
 	public LinearAssigner(ImagePlus imp,boolean verbose){
 		this.imp = imp;
 		imp.getNFrames();
@@ -31,9 +30,9 @@ private boolean verbose;
 	 * 
 	 * Links are assigned by setting the Filopart track index fields
 	 * 
-	 * @param filo	The Filopart Collection for assignment. This is a List of timepoints each having a List of FiloParts.
+	 * @param filo	The <code>Filopart</code> Collection for assignment. This is a List of timepoints each having a List of <code>FiloPart</code>s.
 	 * @see Filopart
-	 * @return The Filopart Collection with track indices assigned for convenience
+	 * @return The <code>Filopart</code> Collection with track indices assigned for convenience
 	 */
 	public ArrayList<ArrayList<Filopart>> run(ArrayList<ArrayList<Filopart>> filo){
 		assign(filo);

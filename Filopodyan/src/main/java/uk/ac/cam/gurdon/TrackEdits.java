@@ -12,7 +12,7 @@ import java.util.Iterator;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-/** Store edits made to tracks in TrackEditor and allows sequences of edits to be saved and loaded.
+/** Store edits made to tracks in <code>TrackEditor</code> and allows sequences of edits to be saved and loaded.
  * 
  * @author Richard Butler
  */
@@ -65,9 +65,11 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 		
 	}
 
-	/** @param editor	The TrackEditor used to get and apply edits
-	 *  @param log	The FilopodyanLog for logging edits
-	 *  @param imageTitle	The title of the FilopodyanLog tab to use
+	/** Create a new sequence of edits for an editor.
+	 * 
+	 *  @param editor	The <code>TrackEditor</code> used to get and apply edits
+	 *  @param log	The <code>FilopodyanLog</code> for logging edits
+	 *  @param imageTitle	The title of the <code>FilopodyanLog</code> tab to use
 	 */
 	public TrackEdits(TrackEditor editor, FilopodyanLog log, String imageTitle){
 		this.editor = editor;
@@ -79,7 +81,7 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 	
 	/** Add an edit to the list of operations and log it as comma delimited ints to save/apply and in human-readable form
 	 * 
-	 * @param edit	The Op representing the type of edit
+	 * @param edit	The <code>Op</code> representing the type of edit
 	 */
 	public void add(Op edit){
 		String op = ""+edit.getInt()+", "+edit.getString();
@@ -90,7 +92,7 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 	
 	/** Add an edit to the list of operations and log it as comma delimited ints to save/apply and in human-readable form
 	 * 
-	 * @param edit	The Op representing the type of edit
+	 * @param edit	The <code>Op</code> representing the type of edit
 	 * @param from	The index changed from
 	 * @param to	The index changed to
 	 * @param min	true if the smaller index should be assigned, false to allow a larger index to be set
@@ -104,7 +106,7 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 	
 	/** Add an edit to the list of operations and log it as comma delimited ints to save/apply and in human-readable form
 	 * 
-	 * @param edit	The Op representing the type of edit
+	 * @param edit	The <code>Op</code> representing the type of edit
 	 * @param track	The index of the edited track
 	 * @param t1	The first timepoint edited
 	 * @param t2	The last timepoint edited
@@ -141,7 +143,7 @@ private String loadPath = Prefs.get("Bounder.loadPath",System.getProperty("user.
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
-	/** Apply the current list of edits to the tracks in the TrackEditor
+	/** Apply the current list of edits to the tracks in the <code>TrackEditor</code>
 	 */
 	public void apply(){
 	try{

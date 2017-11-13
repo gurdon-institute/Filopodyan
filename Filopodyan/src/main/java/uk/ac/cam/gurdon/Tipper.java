@@ -11,14 +11,14 @@ import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 import ij.plugin.Duplicator;
 
-/** Finds the most likely tip positions of non-branched processes
+/** Finds the most likely tip positions of non-branched processes.
  * 
  * @author Richard Butler
  */
 public class Tipper{
 private static final int MIN_R = 3;
 	
-	/** Finds a process tip based on distance from the base and optionally signal maxima in the specified channel
+	/** Finds a process tip based on distance from the base and optionally signal maxima in the specified channel.
 	 * 
 	 * @param imp	The image containing the process
 	 * @param processRoi	The Roi representing the process
@@ -26,7 +26,7 @@ private static final int MIN_R = 3;
 	 * @param measureC	The channel index for intensity measurement
 	 * @param time	The time index of the process
 	 * @param fit	true if the tip position should be adjusted based on maxima in the measurement channel, false otherwise
-	 * @return	The Roi representing the process tip
+	 * @return	The <code>Roi</code> representing the process tip
 	 */
 	public Roi findTip(ImagePlus imp,Roi processRoi,Point base,int measureC,int time,boolean fit){
 		Roi tipRoi = new Roi(0,0,0,0);

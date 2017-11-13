@@ -25,7 +25,7 @@ import ij.ImagePlus;
 import ij.Prefs;
 
 /**{@inheritDoc} 
- * Extends FilopodyanGui to provide a GUI for running Filopodyan on a folder of images with pre-defined parameters.
+ * Extends <code>FilopodyanGui</code> to provide a GUI for running Filopodyan on a folder of images with pre-defined parameters.
  * 
  * @author Richard Butler
  */
@@ -69,7 +69,7 @@ private Timer timer;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Creates the batch mode dialog, calls FilopodyanGui.makeFrame() and adds additonal fields to take filter parameters,
+	/** Creates the batch mode dialog, calls <code>FilopodyanGui.makeFrame()</code> and adds additonal fields to take filter parameters.
 	 * @see FilopodyanGui
 	 */
 	public void createDialog(){
@@ -242,7 +242,7 @@ private Timer timer;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
-	/** A Runnable to run Filopodyan on an image file. Submitted to an ExecutorService to analyse multiple images in parallel.
+	/** A <code>Runnable</code> to run Filopodyan on an image file. Submitted to an <code>ExecutorService</code> to analyse multiple images in parallel.
 	 */
 	public class Batch implements Runnable{
 		private File file;

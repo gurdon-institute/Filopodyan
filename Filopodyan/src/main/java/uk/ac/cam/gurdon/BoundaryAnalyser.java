@@ -32,7 +32,7 @@ private int kymoWidth = 1000;
 		this.imp = imp;
 	}
 	
-	/** Create the visualisations specified in the FilopodyanGui
+	/** Create the visualisations specified in the <code>FilopodyanGui</code>.
 	 * 
 	 * @param filo	The Filopart Collection to be visualised. This is a List of timepoints each having a List of FiloParts.
 	 * @param bodyRoiArr	The growth cone body Rois to be visualised.

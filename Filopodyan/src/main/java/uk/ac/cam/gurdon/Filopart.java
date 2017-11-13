@@ -5,7 +5,7 @@ import java.util.Arrays;
 import ij.IJ;
 import ij.gui.Roi;
 
-/** Represents a 2-dimensional filopodium. Stores Rois, time and part indices, coordinates and statistics.
+/** Represents a 2-dimensional filopodium. Stores <code>Rois</code>, time and part indices, coordinates and statistics.
  * 
  * @author Richard Butler
  */
@@ -16,11 +16,11 @@ public class Filopart{
 	double pixW,area,baseMean,projMean,tipMean,tipThMean,joinCost,dctm,dcbm,sigma,length;
 	Point2d baseCoord, tipCoord;
 	
-	/** Used for testing, the non-static Filopart constuctor should be used instead.
+	/** Used for testing, the non-static <code>Filopart</code> constuctor should be used instead.
 	 * 
-	 * @param r	The process Roi
-	 * @param base	The process base Roi
-	 * @param tip	The process tip Roi
+	 * @param r	The process <code>Roi</code>
+	 * @param base	The process base <code>Roi</code>
+	 * @param tip	The process tip <code>Roi</code>
 	 * @param pixW	The calibrated pixel width
 	 * @param t	The timepoint that this process exists at
 	 * @param i	The index of this process
@@ -29,7 +29,8 @@ public class Filopart{
 	 * @param meanP The process mean intensity
 	 * @param meanT The tip mean intensity
 	 * @param meanThT The thresholded mean intensity
-	 * @param sigma	The Gaussian sigma value used to detect this process 
+	 * @param sigma	The Gaussian sigma value used to detect this process
+	 * @return the new <code>Filopart</code>
 	 */
 	@Deprecated
 	public static Filopart create(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
@@ -40,11 +41,11 @@ public class Filopart{
 		return part;
 	}
 	
-	/** Constuctor taking Rois and values to be stored
+	/** Constuctor taking <code>Roi</code>s and values to be stored
 	 * 
-	 * @param r	The process Roi
-	 * @param base	The process base Roi
-	 * @param tip	The process tip Roi
+	 * @param r	The process <code>Roi</code>
+	 * @param base	The process base <code>Roi</code>
+	 * @param tip	The process tip <code>Roi</code>
 	 * @param pixW	The calibrated pixel width
 	 * @param t	The timepoint that this process exists at
 	 * @param i	The index of this process
@@ -80,9 +81,9 @@ public class Filopart{
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Construct a Filopart containing the same Rois and values as another.
+	/** Construct a <code>Filopart</code> containing the same <code>Roi</code>s and values as another.
 	 * 
-	 * @param copy	The Filopart to copy
+	 * @param copy	The <code>Filopart</code> to copy
 	 */
 	public Filopart(Filopart copy){
 		try{
@@ -107,7 +108,14 @@ public class Filopart{
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Estimate the length of this filopodium as half perimeter corrected for width
+	/** Estimate the length of this filopodium as half perimeter corrected for width.
+	 * <p>
+	 * 	width factor w = 2 * sqrt(2*log(2)) * sigma<br>
+	 *	estimate correction EC = ((PI - 2)/2) * w<br>
+	 *	distance D = distance from the base to the tip<br>
+	 *	scale factor SF = min( (D/w)^2, 1d )<br><br>
+	 *	estimated length = perimeter/2 - EC * SF
+	 * </p>
 	 * 
 	 * @return	The estimated length
 	 */

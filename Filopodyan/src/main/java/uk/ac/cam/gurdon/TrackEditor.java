@@ -48,7 +48,7 @@ import ij.IJ;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
 
-/** A tool allowing manual editing of Filopart tracks
+/** A GUI tool allowing manual editing of <code>Filopart</code> tracks
  * 
  * @author Richard Butler
  */
@@ -85,10 +85,18 @@ private static final Stroke STROKE = new BasicStroke(5f);
 private static final Dimension DISPLAY = Toolkit.getDefaultToolkit().getScreenSize();
 private TrackEdits edits;
 
-	private class PartNode extends JComponent{
+	/** <code>JComponent</code> to display an object in the editor.
+	 */
+	protected class PartNode extends JComponent{
 		private static final long serialVersionUID = 573232345l;
 		int index,x,y,t;
 		Color colour = Color.GRAY;
+		
+		/** Create a <code>PartNode</code> with specified time and track indices
+		 * 
+		 * @param t	the time index
+		 * @param index	the track index
+		 */
 		public PartNode(int t,int index){
 			this.index = index;
 			this.x = index*(width+gap);
@@ -99,6 +107,7 @@ private TrackEdits edits;
 			panW = Math.max(panW,x+width+gap);
 			panH = Math.max(panH,y+height+gap);
 		}
+		@Override
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			g.setColor(colour);
@@ -108,24 +117,32 @@ private TrackEdits edits;
 			g.drawString(""+index,(width-metrics.stringWidth(""+index))/2,(height/2)+5);
 			setLocation(x,y);
 		}
+		
+		/** Sets the fill colour.
+		 * 
+		 * @param col	The fill <code>Color</code>.
+		 */
 		public void setColour(Color col){
 			this.colour = col;
 		}
+		@Override
 		public Dimension getPreferredSize(){
 			return new Dimension(width,height);
 		}
+		@Override
 		public Dimension getMinimumSize(){
 			return new Dimension(width,height);
 		}
+		@Override
 		public Dimension getMaximumSize(){
 			return new Dimension(width,height);
 		}
 	}
 
-	/** Create the TrackEditor for a collection of Filoparts
+	/** Create a <code>TrackEditor</code> for a collection of <code>Filopart</code>s
 	 * 
-	 * @param f	The Filopart Collection to be edited. This is a List of timepoints each having a List of FiloParts.
-	 * @param par	The parent Filopodyan PlugIn
+	 * @param f	The <code>Filopart</code> Collection to be edited. This is a List of timepoints each having a List of <code>FiloPart</code>s.
+	 * @param par	The parent <code>Filopodyan_</code> <code>PlugIn</code>
 	 */
 	public TrackEditor(ArrayList<ArrayList<Filopart>> f,Filopodyan_ par){
 	try{
@@ -163,7 +180,7 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Change the index of a track. Tries to reassign all Filopart indices, shows an error and returns to the original indices if the change would give a duplicate index.
+	/** Change the index of a track. Tries to reassign all <code>Filopart</code> indices, shows an error and restores the original indices if the change would give a duplicate index.
 	*
 	*	@param from	The track index to be changed
 	*	@param to	The new index to assign
@@ -210,7 +227,7 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Update the JScrollPane and the parent Filopart Collection
+	/** Update the <code>JScrollPane</code> and the parent <code>Filopart</code> Collection
 	 */
 	public void update(){
 		if(scroll!=null){	//if the panel has already been constructed
@@ -223,7 +240,7 @@ private TrackEdits edits;
 		if(tracklog){ edits.add(TrackEdits.Op.UPDATE); }
 	}
 	
-	/** Delete Filoparts from a track specified by track and time indices
+	/** Delete <code>Filopart</code>s and associated <code>PartNode</code>s from a track specified by track and time indices
 	 * 
 	 * @param trackI	The index of the track to delete from
 	 * @param t1	The first time index to delete
@@ -246,10 +263,10 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Delete Filoparts from a track specified by a PartNode
+	/** Delete <code>Filopart</code>s and associated <code>PartNode</code>s from a track specified by a <code>PartNode</code>
 	 * 
-	 * @param del	The PartNode representing a Filopart to delete
-	 * @param wholeTrack	true to delete the whole track that this PartNode belongs to, false to delete only this PartNode
+	 * @param del	The <code>PartNode</code> representing a <code>Filopart</code> to delete
+	 * @param wholeTrack	true to delete the whole track that this <code>PartNode</code> belongs to, false to delete only this object
 	 * @param confirm	true to show a confirm dialog before deleting a part or track, false to delete without confirmation
 	 */
 	public void delete(PartNode del,boolean wholeTrack,boolean confirm){
@@ -332,7 +349,7 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Restore the unedited Filopart Collection
+	/** Restore the unedited <code>Filopart</code> Collection
 	 */
 	public void restore(){
 	try{
@@ -370,7 +387,7 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Create and show the TrackEditor Frame and controls
+	/** Create and show the <code>TrackEditor</code> <code>JFrame</code> and controls
 	 */
 	public void run(){
 	try{
