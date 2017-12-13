@@ -37,7 +37,7 @@ private int kymoWidth = 1000;
 	 * @param filo	The Filopart Collection to be visualised. This is a List of timepoints each having a List of FiloParts.
 	 * @param bodyRoiArr	The growth cone body Rois to be visualised.
 	 */
-	public void run(ArrayList<ArrayList<Filopart>> filo,ShapeRoi[] bodyRoiArr){
+	public void run(ArrayList<ArrayList<FiloPod>> filo,ShapeRoi[] bodyRoiArr){
 	try{
 		int T = imp.getNFrames();
 		String title = imp.getTitle();
@@ -62,8 +62,8 @@ private int kymoWidth = 1000;
 		int maxLength = -1;
 		for(int t=1;t<=T;t++){
 			ShapeRoi boundary = bodyRoiArr[t-1];
-			for(Filopart part : filo.get(t-1)){	//construct boundary Roi from included processes only
-				boundary = boundary.or(new ShapeRoi(part.roi));
+			for(FiloPod part : filo.get(t-1)){	//construct boundary Roi from included processes only
+				boundary = boundary.or(new ShapeRoi(part.getRoi()));
 			}
 			imp.setRoi(boundary);	
 			IJ.run(imp, "Interpolate", "interval=1");

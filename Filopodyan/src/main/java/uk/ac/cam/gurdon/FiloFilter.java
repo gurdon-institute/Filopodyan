@@ -36,7 +36,7 @@ private int start = (int)Math.round(Prefs.get("Filopodyan.start",1));
 private int maxIndex;
 private String unit;
 private double pixW;
-private ArrayList<ArrayList<Filopart>> filo, original;
+private ArrayList<ArrayList<FiloPod>> filo, original;
 
 	/** 
 	 * @param filo	The Filopart Collection to be filtered. This is a List of timepoints each having a List of FiloParts.
@@ -44,7 +44,7 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 	 * @param parent	The parent Filopodyan_ PlugIn instance
 	 * @see Filopart
 	 */
-	public FiloFilter(ArrayList<ArrayList<Filopart>> filo, int maxIndex, Filopodyan_ parent){
+	public FiloFilter(ArrayList<ArrayList<FiloPod>> filo, int maxIndex, Filopodyan_ parent){
 	try{
 		this.filo = filo;
 		this.maxIndex = maxIndex;
@@ -52,11 +52,11 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 		Calibration cal = parent.imp.getCalibration();
 		this.pixW = cal.pixelWidth;
 		this.unit = cal.getUnit();
-		this.original = new ArrayList<ArrayList<Filopart>>();
+		this.original = new ArrayList<ArrayList<FiloPod>>();
 			for(int t=0;t<filo.size();t++){
-				ArrayList<Filopart> copy = new ArrayList<Filopart>();
+				ArrayList<FiloPod> copy = new ArrayList<FiloPod>();
 				for(int p=0;p<filo.get(t).size();p++){
-					copy.add(new Filopart(filo.get(t).get(p)));
+					copy.add(filo.get(t).get(p).getCopy());
 				}
 				original.add(copy);
 			}
@@ -126,17 +126,17 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 		this.dctm = bgui.dctm;
 		this.dcbm = bgui.dcbm;
 		this.waviness = bgui.waviness;
-		ArrayList<ArrayList<Filopart>> result = filter();
+		ArrayList<ArrayList<FiloPod>> result = filter();
 		parent.filtered(result);
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	private ArrayList<ArrayList<Filopart>> filter(){
-		ArrayList<ArrayList<Filopart>> ff = new ArrayList<ArrayList<Filopart>>();
+	private ArrayList<ArrayList<FiloPod>> filter(){
+		ArrayList<ArrayList<FiloPod>> ff = new ArrayList<ArrayList<FiloPod>>();
 	try{
 		int T = filo.size();
 		for(int i=0;i<maxIndex;i++){
-			ArrayList<ArrayList<Filopart>> toAdd = new ArrayList<ArrayList<Filopart>>();
+			ArrayList<ArrayList<FiloPod>> toAdd = new ArrayList<ArrayList<FiloPod>>();
 			int exists = 0;
 			double longest = 0d;
 			double changest = 0d;
@@ -146,10 +146,10 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 			int first = Integer.MIN_VALUE;
 			double firstLength = Double.NEGATIVE_INFINITY;
 			for(int t=0;t<T;t++){
-				toAdd.add(new ArrayList<Filopart>());
+				toAdd.add(new ArrayList<FiloPod>());
 				for(int f=0;f<filo.get(t).size();f++){
-					Filopart part = filo.get(t).get(f);
-					if(part.index==i){
+					FiloPod part = filo.get(t).get(f);
+					if(part.getIndex()==i){
 						if(first==Integer.MIN_VALUE){
 							first = t+1;
 							firstLength = part.getLength();
@@ -160,10 +160,10 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 	
 						longest = Math.max(longest,len);
 						changest = Math.max(changest,Math.abs(len-firstLength));
-						dctmest = Math.max(dctmest,part.dctm);
-						dcbmest = Math.max(dcbmest,part.dcbm);
+						dctmest = Math.max(dctmest,part.getDctm());
+						dcbmest = Math.max(dcbmest,part.getDcbm());
 						
-						double straightL = part.baseCoord.distance(part.tipCoord);
+						double straightL = part.getBaseCoord().distance(part.getTipCoord());
 						double straightness = straightL/len;
 						if(straightness>1d){straightness = 1d;}
 						double wav = (1d-straightness);
@@ -180,7 +180,7 @@ private ArrayList<ArrayList<Filopart>> filo, original;
 			}
 			if( (first>=start)&&(longest>=length)&&(exists>=frames)&&(changest>=dl)&&(dctmest>=dctm)&&(dcbmest>=dcbm)&&(meanWaviness<=waviness) ){
 				for(int t=0;t<T;t++){
-					if(ff.size()<=t){ff.add(new ArrayList<Filopart>());}
+					if(ff.size()<=t){ff.add(new ArrayList<FiloPod>());}
 					for(int f=0;f<toAdd.get(t).size();f++){
 						ff.get(t).add(toAdd.get(t).get(f));
 						if(parent.bgui.verbose){parent.bgui.log.print(parent.imp.getTitle(), "Including object "+f+" at T"+t+" in track "+i);}

@@ -9,7 +9,7 @@ import ij.gui.Roi;
  * 
  * @author Richard Butler
  */
-public class Filopart{
+public class Filopart implements FiloPod{
 	Roi roi,base,tip;
 	int T;
 	int index;
@@ -130,6 +130,116 @@ public class Filopart{
 		}
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 		return length;
+	}
+
+	@Override
+	public Filopart getCopy() {
+		return new Filopart(this);
+	}
+
+	@Override
+	public Roi getRoi() {
+		return roi;
+	}
+
+	@Override
+	public Point2d getBaseCoord(){
+		return baseCoord;
+	}
+	
+	@Override
+	public Point2d getTipCoord(){
+		return tipCoord;
+	}
+	
+	@Override
+	public double baseDistance(FiloPod fp) {
+		return this.getBaseCoord().distance(fp.getBaseCoord());
+	}
+
+	@Override
+	public int getT() {
+		return T;
+	}
+
+	@Override
+	public int getIndex() {
+		return index;
+	}
+
+	@Override
+	public Roi getBase() {
+		return base;
+	}
+
+	@Override
+	public Roi getTip() {
+		return tip;
+	}
+
+	@Override
+	public double getArea() {
+		return area;
+	}
+
+	@Override
+	public double getBaseMean() {
+		return baseMean;
+	}
+
+	@Override
+	public double getProjMean() {
+		return projMean;
+	}
+
+	@Override
+	public double getTipMean() {
+		return tipMean;
+	}
+
+	@Override
+	public double getTipThMean() {
+		return tipThMean;
+	}
+
+	@Override
+	public double getJoinCost() {
+		return joinCost;
+	}
+
+	@Override
+	public double getDctm() {
+		return dctm;
+	}
+
+	@Override
+	public double getDcbm() {
+		return dcbm;
+	}
+
+	@Override
+	public double getSigma() {
+		return sigma;
+	}
+
+	@Override
+	public void setJoinCost(double cost) {
+		this.joinCost = cost;
+	}
+	
+	@Override
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	@Override
+	public void setDcbm(double value) {
+		this.dcbm = value;
+	}
+
+	@Override
+	public void setDctm(double value) {
+		this.dctm = value;
 	}
 	
 }

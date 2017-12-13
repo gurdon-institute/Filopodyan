@@ -66,8 +66,8 @@ private static int height = 20;
 private static int gap = 5;
 private int start,end,panW,panH;
 private int scrollHorizontal,scrollVertical;
-public ArrayList<ArrayList<Filopart>> filo;
-private ArrayList<ArrayList<Filopart>> original;
+public ArrayList<ArrayList<FiloPod>> filo;
+private ArrayList<ArrayList<FiloPod>> original;
 private Point startPoint, dragPoint;
 private boolean drag = false;
 private Filopodyan_ parent;
@@ -144,7 +144,7 @@ private TrackEdits edits;
 	 * @param f	The <code>Filopart</code> Collection to be edited. This is a List of timepoints each having a List of <code>FiloPart</code>s.
 	 * @param par	The parent <code>Filopodyan_</code> <code>PlugIn</code>
 	 */
-	public TrackEditor(ArrayList<ArrayList<Filopart>> f,Filopodyan_ par){
+	public TrackEditor(ArrayList<ArrayList<FiloPod>> f,Filopodyan_ par){
 	try{
 		this.filo = f;
 		this.parent = par;
@@ -169,11 +169,11 @@ private TrackEdits edits;
 		sequentialise();
 		tracklog = true;
 		parent.update(filo);
-		original = new ArrayList<ArrayList<Filopart>>();
+		original = new ArrayList<ArrayList<FiloPod>>();
 		for(int t=0;t<filo.size();t++){
-			ArrayList<Filopart> copy = new ArrayList<Filopart>();
+			ArrayList<FiloPod> copy = new ArrayList<FiloPod>();
 			for(int p=0;p<filo.get(t).size();p++){
-				copy.add(new Filopart(filo.get(t).get(p)));
+				copy.add(filo.get(t).get(p).getCopy());
 			}
 			original.add(copy);
 		}
@@ -194,11 +194,11 @@ private TrackEdits edits;
 				to = from;
 				from = temp;
 			}
-			ArrayList<ArrayList<Filopart>> old = new ArrayList<ArrayList<Filopart>>();
+			ArrayList<ArrayList<FiloPod>> old = new ArrayList<ArrayList<FiloPod>>();
 			for(int t=0;t<filo.size();t++){
-				ArrayList<Filopart> copy = new ArrayList<Filopart>();
+				ArrayList<FiloPod> copy = new ArrayList<FiloPod>();
 				for(int p=0;p<filo.get(t).size();p++){
-					copy.add(new Filopart(filo.get(t).get(p)));
+					copy.add(filo.get(t).get(p).getCopy());
 				}
 				old.add(copy);
 			}
@@ -206,16 +206,16 @@ private TrackEdits edits;
 			for(int t=0;t<filo.size();t++){
 				Set<Integer> set = new HashSet<Integer>();
 				for(int p=0;p<filo.get(t).size();p++){	//get existing indices at this t
-					set.add(filo.get(t).get(p).index);
+					set.add(filo.get(t).get(p).getIndex());
 				}					
 				for(int p=0;p<filo.get(t).size();p++){
-					if(filo.get(t).get(p).index==from){
+					if(filo.get(t).get(p).getIndex()==from){
 						if(set.contains(to)){
 							IJ.error("Track Index Error", "Changing from "+from+" to "+to+" would make a duplicate index at T"+(t+1));
 							filo = old;	//reset to unedited version
 							return;
 						}
-						filo.get(t).get(p).index=to;
+						filo.get(t).get(p).setIndex(to);
 					}
 				}
 			}
@@ -253,7 +253,7 @@ private TrackEdits edits;
 		if(t2>filo.size()){t2=filo.size();}
 		for(int t=t1-1;t<t2;t++){
 			for(int p=0;p<filo.get(t).size();p++){
-				if(filo.get(t).get(p).index==trackI){
+				if(filo.get(t).get(p).getIndex()==trackI){
 					filo.get(t).remove(p);
 				}
 			}
@@ -280,7 +280,7 @@ private TrackEdits edits;
 			outer:
 			for(int t=0;t<filo.size();t++){
 				for(int p=0;p<filo.get(t).size();p++){
-					if(filo.get(t).get(p).index==del.index&&t==del.t){
+					if(filo.get(t).get(p).getIndex()==del.index&&t==del.t){
 						filo.get(t).remove(p);
 						if(tracklog){edits.add(TrackEdits.Op.DELETE, del.index, t+1, t+1);}
 						if(parent.bgui.verbose){FilopodyanLog.get().print(parent.imp.getTitle(), "Deleted object from track "+del.index+" at T"+(t+1));}
@@ -298,7 +298,7 @@ private TrackEdits edits;
 			}
 			for(int t=0;t<filo.size();t++){
 				for(int p=0;p<filo.get(t).size();p++){
-					if(filo.get(t).get(p).index==del.index){
+					if(filo.get(t).get(p).getIndex()==del.index){
 						filo.get(t).remove(p);
 						if(tracklog){edits.add(TrackEdits.Op.DELETE, del.index, t+1, t+1);}
 					}
@@ -334,7 +334,7 @@ private TrackEdits edits;
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		for(int t=0;t<filo.size();t++){
 			for(int p=0;p<filo.get(t).size();p++){
-				int ind = filo.get(t).get(p).index;
+				int ind = filo.get(t).get(p).getIndex();
 				if(!indices.contains(ind)){
 					indices.add(ind);
 				}
@@ -354,11 +354,11 @@ private TrackEdits edits;
 	public void restore(){
 	try{
 		filo = original;
-		original = new ArrayList<ArrayList<Filopart>>();
+		original = new ArrayList<ArrayList<FiloPod>>();
 		for(int t=0;t<filo.size();t++){
-			ArrayList<Filopart> copy = new ArrayList<Filopart>();
+			ArrayList<FiloPod> copy = new ArrayList<FiloPod>();
 			for(int p=0;p<filo.get(t).size();p++){
-				copy.add(new Filopart(filo.get(t).get(p)));
+				copy.add(filo.get(t).get(p).getCopy());
 			}
 			original.add(copy);
 		}
@@ -567,7 +567,7 @@ private TrackEdits edits;
 		if(parent.bgui.verbose){FilopodyanLog.get().print(parent.imp.getTitle(), "Constructing Track Editor for "+filo.size()+" frames");}
 		for(int t=0;t<filo.size();t++){
 			for(int p=0;p<filo.get(t).size();p++){
-				PartNode b = new PartNode(t,filo.get(t).get(p).index);
+				PartNode b = new PartNode(t,filo.get(t).get(p).getIndex());
 				nodeList.add(b);
 				panel.add(b);
 			}
@@ -647,10 +647,10 @@ private TrackEdits edits;
 				if(SwingUtilities.isLeftMouseButton(me)){
 					startNode = (PartNode)comp;
 					for(int p=0;p<filo.get(startNode.t).size();p++){
-						if(filo.get(startNode.t).get(p).index==startNode.index){
-							Filopart target = filo.get(startNode.t).get(p);
+						if(filo.get(startNode.t).get(p).getIndex()==startNode.index){
+							FiloPod target = filo.get(startNode.t).get(p);
 							
-							sel = new ShapeRoi(target.roi);
+							sel = new ShapeRoi(target.getRoi());
 							sel.setStrokeColor(Color.YELLOW);
 							
 							startNode.setColour(Color.YELLOW);

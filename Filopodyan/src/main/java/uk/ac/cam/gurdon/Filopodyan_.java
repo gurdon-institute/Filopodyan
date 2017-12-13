@@ -16,6 +16,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import org.scijava.command.Command;
+import org.scijava.plugin.Plugin;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -29,8 +32,8 @@ import ij.gui.TextRoi;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.Duplicator;
+import ij.plugin.HyperStackConverter;
 import ij.plugin.ImageCalculator;
-import ij.plugin.PlugIn;
 import ij.process.ByteProcessor;
 import ij.process.ImageStatistics;
 
@@ -42,31 +45,33 @@ import ij.process.ImageStatistics;
  *
  * @author Richard Butler
  */
-public class Filopodyan_ implements PlugIn{
-public ImagePlus imp;
-private ImagePlus map,body,proj;
-public FilopodyanGui bgui;
-public int W,H,C,Z,T,ind,tStart,tEnd,firstTrackIndex;
-public String title,sanTitle;
-private String unit;
-private double pixelW;
-private ResultsTable filoRT, bodyRT, coordRT;
-private Duplicator dup = new Duplicator();
-private ArrayList<ArrayList<Filopart>> filo;
-private ArrayList<Roi> backRoi;
-private Overlay ol;
-private ShapeRoi[] bodyRoiArr;
-private Roi[] frameBackgroundRoiArray;
-private Roi[] boundaryBackgroundRoiArray;
-private ArrayList<Roi> localBackgroundRois;
-private double[] bodyMean;
-private static final double defaultPixelW = 0.065; //Vasja's 63x objective
-private static final Font labelFont = new Font(Font.MONOSPACED,Font.BOLD,14);
-public boolean batch = false;
-private static final Color frameBackgroundColor = new Color(0, 0, 255, 32);
-private static final Color boundaryBackgroundColor = new Color(255, 0, 0, 32);
-private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
-private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
+
+@Plugin(type = Command.class, menuPath = "Plugins>Filopodyan")
+public class Filopodyan_ implements Command{
+	public ImagePlus imp;
+	private ImagePlus map,body,proj;
+	public FilopodyanGui bgui;
+	public int W,H,C,Z,T,ind,tStart,tEnd,firstTrackIndex;
+	public String title,sanTitle;
+	private String unit;
+	private double pixelW;
+	private ResultsTable filoRT, bodyRT, coordRT;
+	private Duplicator dup = new Duplicator();
+	private ArrayList<ArrayList<FiloPod>> filo;
+	private ArrayList<Roi> backRoi;
+	private Overlay ol;
+	private ShapeRoi[] bodyRoiArr;
+	private Roi[] frameBackgroundRoiArray;
+	private Roi[] boundaryBackgroundRoiArray;
+	private ArrayList<Roi> localBackgroundRois;
+	private double[] bodyMean;
+	private static final double defaultPixelW = 0.065; //Vasja's 63x objective
+	private static final Font labelFont = new Font(Font.MONOSPACED,Font.BOLD,14);
+	public boolean batch = false;
+	private static final Color frameBackgroundColor = new Color(0, 0, 255, 32);
+	private static final Color boundaryBackgroundColor = new Color(255, 0, 0, 32);
+	private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
+	private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
 
 	/** Sets visibility of the current image and runs Enhance Contrast if it is visible. Does nothing in batch mode.
 	 * 
@@ -295,7 +300,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 			return;
 		}
 		
-		filo = new ArrayList<ArrayList<Filopart>>();
+		filo = new ArrayList<ArrayList<FiloPod>>();
 		backRoi = new ArrayList<Roi>();
 		localBackgroundRois = new ArrayList<Roi>();
 		ol = new Overlay();
@@ -309,7 +314,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 			bgui.setLabel("mapping processes T"+t+"<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Analysing objects at T"+t);}
 			imp.setPosition(1,1,t);
-			ArrayList<Filopart> timeFilo = new ArrayList<Filopart>();
+			ArrayList<FiloPod> timeFilo = new ArrayList<FiloPod>();
 			proj.setPosition(1,1,t);
 			IJ.run(proj, "Create Selection", "");
 			if(proj.getRoi()==null){continue;}
@@ -508,17 +513,17 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 			for(int t=tStart;t<=tEnd;t++){
 				int tzb = t-1;	//zero-based value for ArrayList indexes
 				for(int f=0;f<filo.get(tzb).size();f++){
-					Filopart part = filo.get(tzb).get(f);
-					if(part.index==i){
+					FiloPod part = filo.get(tzb).get(f);
+					if(part.getIndex()==i){
 						if(lastT==tzb-1){
-							Vector baseToTip = new Vector(part.baseCoord, part.tipCoord);
-							Vector tipMove = new Vector(tipLast, part.tipCoord);
-							Vector baseMove = new Vector(baseLast, part.baseCoord);
-							part.dctm = tipMove.getRelativeMagnitude(baseToTip);
-							part.dcbm = baseMove.getRelativeMagnitude(baseToTip);
+							Vector baseToTip = new Vector(part.getBaseCoord(), part.getTipCoord());
+							Vector tipMove = new Vector(tipLast, part.getTipCoord());
+							Vector baseMove = new Vector(baseLast, part.getBaseCoord());
+							part.setDctm(tipMove.getRelativeMagnitude(baseToTip));
+							part.setDcbm(baseMove.getRelativeMagnitude(baseToTip));
 						}
-						tipLast = part.tipCoord;
-						baseLast = part.baseCoord;
+						tipLast = part.getTipCoord();
+						baseLast = part.getBaseCoord();
 						lastT = tzb;
 						continue time;
 					}
@@ -535,7 +540,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	 * @see TrackEditor
 	 * @see Filopart
 	 */
-	public void filtered(ArrayList<ArrayList<Filopart>> backPass){
+	public void filtered(ArrayList<ArrayList<FiloPod>> backPass){
 		filo = backPass;
 		LinearAssigner LA2 = new LinearAssigner(imp,bgui.verbose);
 		filo = LA2.run(filo);
@@ -557,7 +562,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	 * @see Filopart
 	 * @see TrackEditor
 	 */
-	public void trackEdited(ArrayList<ArrayList<Filopart>> backPass){
+	public void trackEdited(ArrayList<ArrayList<FiloPod>> backPass){
 		filo = backPass;
 		output(filo);
 	}
@@ -568,7 +573,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	 *  @see Filopart
 	 *  @see Filopodyan_#doOverlay()
 	 */
-	public void update(ArrayList<ArrayList<Filopart>> f){
+	public void update(ArrayList<ArrayList<FiloPod>> f){
 		if(f.size()>=0){
 			filo = f;
 			doOverlay();
@@ -599,27 +604,27 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 			
 			ol.add(bodyRoiArr[t]);
 			for(int a=0;a<filo.get(t).size();a++){
-				Filopart part = filo.get(t).get(a);
-				if(part.index==-1){continue;}
-				firstTrackIndex = (int)Math.min(firstTrackIndex, part.index);
-				String str = String.valueOf(part.index);
-				TextRoi label = new TextRoi( part.baseCoord.x/pixelW, part.baseCoord.y/pixelW, str, labelFont );
+				FiloPod part = filo.get(t).get(a);
+				if(part.getIndex()==-1){continue;}
+				firstTrackIndex = (int)Math.min(firstTrackIndex, part.getIndex());
+				String str = String.valueOf(part.getIndex());
+				TextRoi label = new TextRoi( part.getBaseCoord().x/pixelW, part.getBaseCoord().y/pixelW, str, labelFont );
 				
 				if(INDEX1D){
-					part.roi.setPosition(index1D);
-					part.base.setPosition(index1D);
-					part.tip.setPosition(index1D);
+					part.getRoi().setPosition(index1D);
+					part.getBase().setPosition(index1D);
+					part.getTip().setPosition(index1D);
 					label.setPosition(index1D);
 				}
 				else{
-					part.roi.setPosition(0,1,t+1);
-					part.base.setPosition(0,1,t+1);
-					part.tip.setPosition(0,1,t+1);
+					part.getRoi().setPosition(0,1,t+1);
+					part.getBase().setPosition(0,1,t+1);
+					part.getTip().setPosition(0,1,t+1);
 					label.setPosition(0,1,t+1);
 				}
-				ol.add(part.roi);
-				ol.add(part.base);
-				ol.add(part.tip);
+				ol.add(part.getRoi());
+				ol.add(part.getBase());
+				ol.add(part.getTip());
 
 				label.setStrokeColor(Color.CYAN);
 				ol.add(label);
@@ -653,7 +658,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	 * @param backPass	The <code>Filopart</code> Collection for output. This is a List of timepoints each having a List of <code>Filopart</code>s.
 	 * @see Filopart
 	 */
-	public void output(final ArrayList<ArrayList<Filopart>> backPass){
+	public void output(final ArrayList<ArrayList<FiloPod>> backPass){
 		try{
 			if(!batch){bgui.workFrame.setVisible(true);}
 			SwingWorker<Object, Void> worker = new SwingWorker<Object, Void>(){
@@ -704,20 +709,20 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 							try{
 								int t = ti-1;
 								for(int f=0;f<filo.get(t).size();f++){
-									Filopart part = filo.get(t).get(f);
-									if(part.index==i){
+									FiloPod part = filo.get(t).get(f);
+									if(part.getIndex()==i){
 										if(start==Integer.MAX_VALUE){
 											start = t;
 											dtArr[t] = 0;
 										}
 										else{dtArr[t] = t-start;}
-										baseMeanArr[t] = part.baseMean;
-										projMeanArr[t] = part.projMean;
-										tipMeanArr[t] = part.tipMean;
-										tipThMeanArr[t] = part.tipThMean;
+										baseMeanArr[t] = part.getBaseMean();
+										projMeanArr[t] = part.getProjMean();
+										tipMeanArr[t] = part.getTipMean();
+										tipThMeanArr[t] = part.getTipThMean();
 
 										imp.setPosition(bgui.measureC, 1, t);
-										Roi tipBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.tip, 5 )).xor( new ShapeRoi(part.tip) ).not( new ShapeRoi(part.roi) ).not( new ShapeRoi(bodyRoiArr[t] ));
+										Roi tipBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.getTip(), 5 )).xor( new ShapeRoi(part.getTip()) ).not( new ShapeRoi(part.getRoi()) ).not( new ShapeRoi(bodyRoiArr[t] ));
 										if(tipBackgroundRoi!=null){
 											imp.setRoi(tipBackgroundRoi);
 											localTipBackgroundArr[t] = imp.getStatistics().mean;
@@ -731,9 +736,9 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 										}
 										Roi baseBackgroundRoi = null;
 										try{
-											baseBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.base, 5 ))
-																											.xor( new ShapeRoi(part.base) )
-																											.not( new ShapeRoi(part.roi) )
+											baseBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.getBase(), 5 ))
+																											.xor( new ShapeRoi(part.getBase()) )
+																											.not( new ShapeRoi(part.getRoi()) )
 																											.not( new ShapeRoi(bodyRoiArr[t] ));
 										}catch(IllegalArgumentException iae){}	//ignore exception caused by zero area ShapeRoi, baseBackgroundRoi remains null
 										if(baseBackgroundRoi!=null){
@@ -749,12 +754,12 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 										}
 
 										lengthArr[t] = part.getLength();
-										dctmArr[t] = part.dctm;
-										dcbmArr[t] = part.dcbm;
-										baseCoordArr[t] = part.baseCoord;
-										tipCoordArr[t] = part.tipCoord;
+										dctmArr[t] = part.getDctm();
+										dcbmArr[t] = part.getDcbm();
+										baseCoordArr[t] = part.getBaseCoord();
+										tipCoordArr[t] = part.getTipCoord();
 										if(t>0){ dlArr[t] = lengthArr[t]-lengthArr[t-1]; }
-										Roi backBase = new OvalRoi((part.baseCoord.x/pixelW)-4.5,(part.baseCoord.y/pixelW)-4.5,9,9);	//use the first real base coordinate for the first back projection
+										Roi backBase = new OvalRoi((part.getBaseCoord().x/pixelW)-4.5,(part.getBaseCoord().y/pixelW)-4.5,9,9);	//use the first real base coordinate for the first back projection
 										int backX = -1;
 										int backY = -1;
 										for(int back=-1;back>=bgui.backFrames;back--){
@@ -1001,7 +1006,7 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	
 
 	@Override
-	public void run(String arg){
+	public void run(){
 	try{
 		if(WindowManager.getImageCount()==0){
 			bgui = new BatchFilopodyan();
@@ -1050,24 +1055,28 @@ private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviou
 	 * 	@param arg	not used
 	 * */
 	public static void main(String[] arg){
-		JFileChooser fc = new JFileChooser();
+		
+		/*JFileChooser fc = new JFileChooser();
 		fc.setDialogTitle("Filopodyan test image...");
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 	    if(fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 	    	String path = fc.getSelectedFile().getAbsolutePath();
 	    	ImagePlus image = new ImagePlus(path);
 			image.show();
-	    }
+	    }*/
 		
-		final ij.ImageJ ij = new ij.ImageJ();
-		
+	    final ij.ImageJ ij = new ij.ImageJ();
+		ImagePlus img = new ImagePlus("E:\\Vasja\\testing_220716\\smalltest.tif");
+		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 31);
+		image.setDisplayMode(IJ.COLOR);
+		image.show();
 		ij.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent we){
 				System.exit(1);
 			}
 		});
-		
-		new Filopodyan_().run("");
+	    
+		new Filopodyan_().run();
 	}
 	
 }
