@@ -16,7 +16,6 @@ import ij.process.ImageProcessor;
  * @author Richard Butler
  */
 public class ProcessProcessor{
-private ImageProcessor ip;
 private static final int MAX_ITERATIONS = 10;
 
 	private class Tople{
@@ -70,7 +69,7 @@ private static final int MAX_ITERATIONS = 10;
 	 *  @return	the input map after processing (for convenience)
 	 */
 	public ImagePlus join(ImagePlus map){
-		ip = map.getProcessor();
+		ImageProcessor ip = map.getProcessor();
 		ip.setColor(Color.WHITE);
 		for(int t=1;t<=map.getNFrames();t++){
 			map.setPosition(1,1,t);

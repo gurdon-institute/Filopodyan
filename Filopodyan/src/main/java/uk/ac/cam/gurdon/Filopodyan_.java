@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
@@ -181,16 +180,15 @@ public class Filopodyan_ implements Command{
 			IJ.run(imp, "Select None", "");
 		}
 		
-		FilopodyanProcessor processor = new FilopodyanProcessor();
 		if(bgui.adaptive){
 			bgui.setLabel("adaptive thresholding<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Running adaptive thresholding");}
-			map = processor.ALT(imp,bgui.mapC,tStart, tEnd, bgui.threshold, bgui.sigma, bgui.verbose);
+			map = FilopodyanProcessor.ALT(imp,bgui.mapC,tStart, tEnd, bgui.threshold, bgui.sigma, bgui.verbose);
 		}
 		else{
 			bgui.setLabel("Laplacian of Gaussian<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Running Laplacian of Gaussian");}
-			map = processor.LoG(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
+			map = FilopodyanProcessor.LoG(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
 		} 
 		
 		if(userRoi!=null){
@@ -655,7 +653,7 @@ public class Filopodyan_ implements Command{
 	
 	/** Measures all filopodia and shows them in <code>ResultsTable</code>s and the image <code>Overlay</code>.
 	 * 
-	 * @param backPass	The <code>Filopart</code> Collection for output. This is a List of timepoints each having a List of <code>Filopart</code>s.
+	 * @param backPass	The <code>FiloPod</code> Collection for output. This is a List of timepoints each having a List of <code>FiloPod</code>s.
 	 * @see Filopart
 	 */
 	public void output(final ArrayList<ArrayList<FiloPod>> backPass){

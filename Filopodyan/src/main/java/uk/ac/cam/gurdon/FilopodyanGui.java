@@ -109,28 +109,28 @@ public static final String helpText =
 
 public boolean oked = false;
 public boolean preview = false;
-public boolean boundaryAnalysis = Prefs.get("Filopodyan.boundaryAnalysis",false);
-public boolean tipPlot = Prefs.get("Filopodyan.tipPlot",false);
-public boolean filoTable = Prefs.get("Filopodyan.filoTable",false);
-public boolean coordTable = Prefs.get("Filopodyan.coordTable",false);
-public boolean bodyTable = Prefs.get("Filopodyan.bodyTable",false);
-public boolean kymographs = Prefs.get("Filopodyan.kymographs",false);
-public boolean ccf = Prefs.get("Filopodyan.ccf",false);
-public boolean basePlot = Prefs.get("Filopodyan.basePlot",false);
-public boolean time = Prefs.get("Filopodyan.time",false);
-public boolean adaptive = Prefs.get("Filopodyan.adaptive",false);
-public boolean fit = Prefs.get("Filopodyan.fit",false);
-public boolean verbose = Prefs.get("Filopodyan.verbose",false);
-public boolean join = Prefs.get("Filopodyan.join",false);
+public boolean boundaryAnalysis = Prefs.get("Filopodyan.boundaryAnalysis", false);
+public boolean tipPlot = Prefs.get("Filopodyan.tipPlot", false);
+public boolean filoTable = Prefs.get("Filopodyan.filoTable", false);
+public boolean coordTable = Prefs.get("Filopodyan.coordTable", false);
+public boolean bodyTable = Prefs.get("Filopodyan.bodyTable", false);
+public boolean kymographs = Prefs.get("Filopodyan.kymographs", false);
+public boolean ccf = Prefs.get("Filopodyan.ccf", false);
+public boolean basePlot = Prefs.get("Filopodyan.basePlot", false);
+public boolean time = Prefs.get("Filopodyan.time", false);
+public boolean adaptive = Prefs.get("Filopodyan.adaptive", false);
+public boolean fit = Prefs.get("Filopodyan.fit", false);
+public boolean verbose = Prefs.get("Filopodyan.verbose", false);
+public boolean join = Prefs.get("Filopodyan.join", false);
 public boolean showBackground = Prefs.get("Filopodyan.showBackground", false);
-public boolean advMode = Prefs.get("Filopodyan.advMode",false);
-public int eds = (int)Prefs.get("Filopodyan.eds",8);
-public int backFrames = (int)Prefs.get("Filopodyan.backFrames",3);
-public int mapC = (int)Math.round(Prefs.get("Filopodyan.mapC",1));
-public int measureC = (int)Math.round(Prefs.get("Filopodyan.measureC",2));
-public double sigma = Prefs.get("Filopodyan.sigma",3d);
-public double weight = Prefs.get("Filopodyan.weight",0.8d);
-public String threshold = Prefs.get("Filopodyan.threshold","Triangle");
+public boolean advMode = Prefs.get("Filopodyan.advMode", false);
+public int eds = (int)Prefs.get("Filopodyan.eds", 8);
+public int backFrames = (int)Prefs.get("Filopodyan.backFrames", 3);
+public int mapC = (int)Math.round(Prefs.get("Filopodyan.mapC", 1));
+public int measureC = (int)Math.round(Prefs.get("Filopodyan.measureC", 2));
+public double sigma = Prefs.get("Filopodyan.sigma", 3d);
+public double weight = Prefs.get("Filopodyan.weight", 0.8d);
+public String threshold = Prefs.get("Filopodyan.threshold", "Triangle");
 public JFrame workFrame, helpFrame;
 public int C;
 private static final int BASIC = 0;
@@ -206,6 +206,7 @@ private JLabel workLabel;
 			private final Color selColour = new Color(255, 220, 255);
 			private final Color unselColour = new Color(220, 255, 220);
 			public final Font font = new Font(Font.SANS_SERIF, Font.BOLD, 12);
+			
 			@Override
 			public void paintComponent(Graphics g){
 				super.paintComponent(g);

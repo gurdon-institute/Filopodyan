@@ -28,7 +28,7 @@ public class FilopodyanProcessor{
  * @param verbose	true to log additional information including the LoG kernel
  * @return	a mask created by LoG processing and thresholding using the sigma and autothreshold method values given as arguments
  * */
-public ImagePlus LoG(ImagePlus imp, int chan, int t0, int t1, double sigma, String threshold, boolean verbose){
+public static ImagePlus LoG(ImagePlus imp, int chan, int t0, int t1, double sigma, String threshold, boolean verbose){
 	
 	ImagePlus map = new Duplicator().run(imp,chan,chan, 1, 1, t0, t1);
 	int radius = (int)Math.ceil(2*sigma);
@@ -70,7 +70,7 @@ public ImagePlus LoG(ImagePlus imp, int chan, int t0, int t1, double sigma, Stri
  * @param verbose	true to log additional information including the directional LoG kernels
  * @return	a mask created by LoG processing and thresholding using the sigma and autothreshold method values given as arguments
  */
-public ImagePlus ALT(ImagePlus imp, int chan, int t0, int t1, String threshold, double sigma, boolean verbose){
+public static ImagePlus ALT(ImagePlus imp, int chan, int t0, int t1, String threshold, double sigma, boolean verbose){
 		ImagePlus map = new Duplicator().run(imp,chan,chan, 1, 1, t0, t1);
 		IJ.run(map, "Subtract Background...", "rolling="+(sigma*10)+" stack");
 		

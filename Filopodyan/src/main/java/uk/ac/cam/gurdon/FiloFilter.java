@@ -132,7 +132,7 @@ private ArrayList<ArrayList<FiloPod>> filo, original;
 	}
 	
 	private ArrayList<ArrayList<FiloPod>> filter(){
-		ArrayList<ArrayList<FiloPod>> ff = new ArrayList<ArrayList<FiloPod>>();
+		ArrayList<ArrayList<FiloPod>> filtered = new ArrayList<ArrayList<FiloPod>>();
 	try{
 		int T = filo.size();
 		for(int i=0;i<maxIndex;i++){
@@ -180,18 +180,18 @@ private ArrayList<ArrayList<FiloPod>> filo, original;
 			}
 			if( (first>=start)&&(longest>=length)&&(exists>=frames)&&(changest>=dl)&&(dctmest>=dctm)&&(dcbmest>=dcbm)&&(meanWaviness<=waviness) ){
 				for(int t=0;t<T;t++){
-					if(ff.size()<=t){ff.add(new ArrayList<FiloPod>());}
+					if(filtered.size()<=t){filtered.add(new ArrayList<FiloPod>());}
 					for(int f=0;f<toAdd.get(t).size();f++){
-						ff.get(t).add(toAdd.get(t).get(f));
+						filtered.get(t).add(toAdd.get(t).get(f));
 						if(parent.bgui.verbose){parent.bgui.log.print(parent.imp.getTitle(), "Including object "+f+" at T"+t+" in track "+i);}
 					}
 				}
 			}
 			else if(parent.bgui.verbose){parent.bgui.log.print(parent.imp.getTitle(), "Excluding track "+i+" frames="+exists+", longest="+longest+" dl="+changest+" mean waviness="+meanWaviness);}
 		}
-		parent.update(ff);
+		parent.update(filtered);
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
-		return ff;
+		return filtered;
 	}
 	
 	@Override

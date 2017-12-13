@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -53,98 +52,50 @@ import ij.gui.ShapeRoi;
  * @author Richard Butler
  */
 public class TrackEditor{
-private JFrame gui;
-private JPanel panel, holder;
-private JScrollPane scroll;
-private ActionListener listen;
-private JRadioButton qdOffTick, qdTrackTick, qdObjectTick;
-private JPopupMenu rcMenu;
-private JDialog rangeDialog;
-private JTextField startField, endField;
-private static int width = 30;
-private static int height = 20;
-private static int gap = 5;
-private int start,end,panW,panH;
-private int scrollHorizontal,scrollVertical;
-public ArrayList<ArrayList<FiloPod>> filo;
-private ArrayList<ArrayList<FiloPod>> original;
-private Point startPoint, dragPoint;
-private boolean drag = false;
-private Filopodyan_ parent;
-private static final Font font = new Font(Font.SANS_SERIF,Font.PLAIN,12);
-private PartNode startNode,dragNode;
-private ArrayList<PartNode> nodeList;
-private Timer clearTimer = new Timer();
-private TimerTask task;
-private ShapeRoi sel;
-private int uniquei = 1;	//unique added index when keeping old duplicate track edit log pane, incremented each time
-public boolean tracklog = true;	//toggle used to switch off logging when required
-private boolean quickDeleteTrack = false;
-private boolean quickDeleteObject = false;
-private static final Stroke STROKE = new BasicStroke(5f);
-private static final Dimension DISPLAY = Toolkit.getDefaultToolkit().getScreenSize();
-private TrackEdits edits;
-
-	/** <code>JComponent</code> to display an object in the editor.
-	 */
-	protected class PartNode extends JComponent{
-		private static final long serialVersionUID = 573232345l;
-		int index,x,y,t;
-		Color colour = Color.GRAY;
-		
-		/** Create a <code>PartNode</code> with specified time and track indices
-		 * 
-		 * @param t	the time index
-		 * @param index	the track index
-		 */
-		public PartNode(int t,int index){
-			this.index = index;
-			this.x = index*(width+gap);
-			this.t = t;
-			this.y = gap+(t*(height+gap));
-			this.setSize(width,height);
-			this.setFont(font);
-			panW = Math.max(panW,x+width+gap);
-			panH = Math.max(panH,y+height+gap);
-		}
-		@Override
-		public void paintComponent(Graphics g){
-			super.paintComponent(g);
-			g.setColor(colour);
-			g.fillOval(0,0,width,height);
-			g.setColor(Color.BLACK);
-			FontMetrics metrics = g.getFontMetrics();
-			g.drawString(""+index,(width-metrics.stringWidth(""+index))/2,(height/2)+5);
-			setLocation(x,y);
-		}
-		
-		/** Sets the fill colour.
-		 * 
-		 * @param col	The fill <code>Color</code>.
-		 */
-		public void setColour(Color col){
-			this.colour = col;
-		}
-		@Override
-		public Dimension getPreferredSize(){
-			return new Dimension(width,height);
-		}
-		@Override
-		public Dimension getMinimumSize(){
-			return new Dimension(width,height);
-		}
-		@Override
-		public Dimension getMaximumSize(){
-			return new Dimension(width,height);
-		}
-	}
+	
+	int panW;
+	int panH;
+	public ArrayList<ArrayList<FiloPod>> filo;
+	public boolean tracklog = true; // toggle used to switch off logging when required
+	
+	private static final Stroke STROKE = new BasicStroke(5f);
+	private static final Dimension DISPLAY = Toolkit.getDefaultToolkit().getScreenSize();
+	static final Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+	static int width = 30;
+	static int height = 20;
+	static int gap = 5;
+	
+	private JFrame gui;
+	private JPanel panel, holder;
+	private JScrollPane scroll;
+	private ActionListener listen;
+	private JRadioButton qdOffTick, qdTrackTick, qdObjectTick;
+	private JPopupMenu rcMenu;
+	private JDialog rangeDialog;
+	private JTextField startField, endField;
+	private int start, end;
+	private int scrollHorizontal, scrollVertical;
+	private ArrayList<ArrayList<FiloPod>> original;
+	private Point startPoint, dragPoint;
+	private boolean drag = false;
+	private Filopodyan_ parent;
+	
+	private PartNode startNode, dragNode;
+	private ArrayList<PartNode> nodeList;
+	private Timer clearTimer = new Timer();
+	private TimerTask task;
+	private ShapeRoi sel;
+	private int uniquei = 1; // unique added index when keeping old duplicate track edit log pane, incremented each time
+	private boolean quickDeleteTrack = false;
+	private boolean quickDeleteObject = false;
+	private TrackEdits edits;
 
 	/** Create a <code>TrackEditor</code> for a collection of <code>Filopart</code>s
 	 * 
 	 * @param f	The <code>Filopart</code> Collection to be edited. This is a List of timepoints each having a List of <code>FiloPart</code>s.
 	 * @param par	The parent <code>Filopodyan_</code> <code>PlugIn</code>
 	 */
-	public TrackEditor(ArrayList<ArrayList<FiloPod>> f,Filopodyan_ par){
+	public TrackEditor(ArrayList<ArrayList<FiloPod>> f, Filopodyan_ par){
 	try{
 		this.filo = f;
 		this.parent = par;
@@ -349,7 +300,7 @@ private TrackEdits edits;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Restore the unedited <code>Filopart</code> Collection
+	/** Restore the unedited <code>FiloPod</code> Collection
 	 */
 	public void restore(){
 	try{
@@ -567,7 +518,7 @@ private TrackEdits edits;
 		if(parent.bgui.verbose){FilopodyanLog.get().print(parent.imp.getTitle(), "Constructing Track Editor for "+filo.size()+" frames");}
 		for(int t=0;t<filo.size();t++){
 			for(int p=0;p<filo.get(t).size();p++){
-				PartNode b = new PartNode(t,filo.get(t).get(p).getIndex());
+				PartNode b = new PartNode(this, t,filo.get(t).get(p).getIndex());
 				nodeList.add(b);
 				panel.add(b);
 			}

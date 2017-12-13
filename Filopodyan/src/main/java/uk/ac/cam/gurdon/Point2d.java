@@ -1,7 +1,7 @@
 package uk.ac.cam.gurdon;
 
 
-/** Simple utility class to avoid Java3D because iProducts can't handle it.
+/** Simple utility class to avoid javax.vecmath because iProducts can't handle it.
  */
 public class Point2d {
 public double x,y;

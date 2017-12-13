@@ -28,11 +28,11 @@ private boolean verbose;
 	/** Run the linear asignment algorithm. A fast 1-step algorithm is used since the same cost for two links is very unlikely using the formula:
 	 * cost = ((distance between bases + distance between tips) / sqrt(overlap area)) * time difference
 	 * 
-	 * Links are assigned by setting the Filopart track index fields
+	 * Links are assigned by setting the FiloPod track index fields
 	 * 
-	 * @param filo	The <code>Filopart</code> Collection for assignment. This is a List of timepoints each having a List of <code>FiloPart</code>s.
+	 * @param filo	The <code>FiloPod</code> Collection for assignment. This is a List of timepoints each having a List of <code>FiloPod</code>s.
 	 * @see Filopart
-	 * @return The <code>Filopart</code> Collection with track indices assigned for convenience
+	 * @return The <code>FiloPod</code> Collection with track indices assigned for convenience
 	 */
 	public ArrayList<ArrayList<FiloPod>> run(ArrayList<ArrayList<FiloPod>> filo){
 		assign(filo);
