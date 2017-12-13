@@ -9,7 +9,7 @@ Urbancic, V., Butler, R., Richier, B., Peter, M., Mason, J., Holt, C. E., Gallop
 
 The plugin is supplied as a .jar file ([Filopodyan_.jar](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan_.jar)). 
 
-Please refer to the associated user guide ([Filopodyan User Guide.pdf](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan%20User%20Guide.pdf)) for information on plugin installation, instructions for use and practical advice.
+Please refer to the associated user guide ([Filopodyan User Guide.pdf](https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan%20User%20Guide.pdf)) for information on plugin installation, instructions for use and practical advice. API docs are available ([here](https://htmlpreview.github.io/?https://github.com/gurdon-institute/Filopodyan/blob/master/Filopodyan/doc/index.html))
 
 
 ## FilopodyanR - downstream analysis of filopodia properties and fluorescence
