@@ -8,7 +8,7 @@ import ij.gui.Roi;
  */
 public interface FiloPod {
 	
-	/** Get the process length
+	/** @return the process length
 	 */
 	public double getLength();
 	
@@ -81,22 +81,27 @@ public interface FiloPod {
 	public double getSigma();
 	
 	/** assign a join cost
+	 * @param cost the value to assign
 	 */
 	public void setJoinCost(double cost);
 	
 	/** set the object index
+	 * @param index the index to assign
 	 */
 	public void setIndex(int index);
 	
 	/** set the DCBM
+	 * @param value the DCBM value
 	 */
 	public void setDcbm(double value);
 	
 	/** set the DCTM
+	 * @param value the DCTM value
 	 */
 	public void setDctm(double value);
 	
-	/** @return the distance between the base coordinates of this object and the FiloPod argument 
+	/** @return the distance between the base coordinates of this object and the FiloPod argument
+	 * @param fp the <code>FiloPod</code> to get base distance to
 	 */
 	public double baseDistance(FiloPod fp);
 	

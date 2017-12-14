@@ -67,10 +67,11 @@ public class Filopodyan_ implements Command{
 	private static final double defaultPixelW = 0.065; //Vasja's 63x objective
 	private static final Font labelFont = new Font(Font.MONOSPACED,Font.BOLD,14);
 	public boolean batch = false;
+	//private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
 	private static final Color frameBackgroundColor = new Color(0, 0, 255, 32);
 	private static final Color boundaryBackgroundColor = new Color(255, 0, 0, 32);
 	private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
-	private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
+
 
 	/** Sets visibility of the current image and runs Enhance Contrast if it is visible. Does nothing in batch mode.
 	 * 
@@ -146,6 +147,16 @@ public class Filopodyan_ implements Command{
 		return false;
 	}
 	
+	//set the position of a Roi using 1 dimension for a stack or 3 dimensions for a hyperstack
+	private void setRoiFrame(Roi roi, int t){
+		if(C==1){
+			roi.setPosition(1,1,t);
+		}
+		else{
+			roi.setPosition(t);
+		}
+	}
+	
 	/** Detects filopodia in the image.
 	 * 
 	 * @param prev	true to run a preview, mapping only the currently displayed frame, false to run on all frames and continue to filtering and tracking
@@ -219,14 +230,10 @@ public class Filopodyan_ implements Command{
 					
 					ShapeRoi enlarged = new ShapeRoi( RoiEnlargerHandler.enlarge(signalRoi, 20) );
 					boundaryBackgroundRoiArray[t] = enlarged.xor((ShapeRoi) signalRoi);
-					if(INDEX1D){
-						frameBackgroundRoiArray[t].setPosition(t);
-						boundaryBackgroundRoiArray[t].setPosition(t);
-					}
-					else{
-						frameBackgroundRoiArray[t].setPosition(1, 1, t);
-						boundaryBackgroundRoiArray[t].setPosition(1, 1, t);
-					}
+
+					setRoiFrame(frameBackgroundRoiArray[t], t);
+					setRoiFrame(boundaryBackgroundRoiArray[t], t);
+					
 					map.killRoi();
 				}
 			}
@@ -274,24 +281,14 @@ public class Filopodyan_ implements Command{
 			if(body.getRoi()!=null){
 				bodyRoi = body.getRoi();
 				bodyRoi.setStrokeColor(Color.RED);
-				if(INDEX1D){
-					bodyRoi.setPosition(tStart);
-				}
-				else{
-					bodyRoi.setPosition(0,0,tStart);
-				}
+				setRoiFrame(bodyRoi, tStart);
 				prevol.add(bodyRoi);
 			}
 			IJ.run(proj, "Create Selection", "");
 			if(proj.getRoi()!=null){
 				Roi projRoi = proj.getRoi();
 				projRoi.setStrokeColor(Color.PINK);
-				if(INDEX1D){
-					projRoi.setPosition(tStart);
-				}
-				else{
-					projRoi.setPosition(0,0,tStart);
-				}
+				setRoiFrame(projRoi, tStart);
 				prevol.add(projRoi);
 			}
 			imp.setOverlay(prevol);
@@ -351,12 +348,7 @@ public class Filopodyan_ implements Command{
 					}
 				}
 			}
-			if(INDEX1D){
-				bodyRoi.setPosition(t);
-			}
-			else{
-				bodyRoi.setPosition(bgui.mapC,1,t);
-			}
+			setRoiFrame(bodyRoi, t);
 			bodyRoi.setStrokeColor(Color.MAGENTA);
 			bodyRoiArr[t-1] = bodyRoi;
 			
@@ -383,12 +375,7 @@ public class Filopodyan_ implements Command{
 
 			PointRoi bodyCentroid = new PointRoi(rr.x+(rr.width/2),rr.y+(rr.height/2));
 			
-			if(INDEX1D){
-				bodyCentroid.setPosition(t);
-			}
-			else{
-				bodyCentroid.setPosition(bgui.mapC,1,t);
-			}
+			setRoiFrame(bodyCentroid, t);
 			bodyCentroid.setStrokeColor(Color.MAGENTA);
 			ol.add(bodyCentroid);
 			
@@ -406,15 +393,7 @@ public class Filopodyan_ implements Command{
 				double projMean = imp.getStatistics().mean;
 				ShapeRoi grow = new ShapeRoi(RoiEnlargerHandler.enlarge(split[f],3));
 				ShapeRoi baseRoi = grow.and(bodyRoi);
-				
-				
-				
-				if(INDEX1D){
-					baseRoi.setPosition(t);
-				}
-				else{
-					baseRoi.setPosition(0,1,t);
-				}
+				setRoiFrame(baseRoi, t);
 				baseRoi.setStrokeColor(Color.YELLOW);
 				imp.setRoi(baseRoi);
 				double baseMean = imp.getStatistics().mean;		
@@ -430,13 +409,7 @@ public class Filopodyan_ implements Command{
 				IJ.run(tipMeasure, "Create Selection", "");
 				double tipThMean = tipMeasure.getStatistics().mean;	//mean of Otsu thresholded values in tip ROI			
 				tipMeasure.close();
-				tipRoi.setPosition(0,1,t);
-				if(INDEX1D){
-					tipRoi.setPosition(t);
-				}
-				else{
-					tipRoi.setPosition(0,1,t);
-				}
+				setRoiFrame(tipRoi, t);
 				tipRoi.setStrokeColor(Color.GREEN);
 	
 				Roi processRoi = (Roi)new ShapeRoi(split[f]).or(new ShapeRoi(tipRoi));
@@ -461,13 +434,7 @@ public class Filopodyan_ implements Command{
 						if(processRoi.getLength()<1){processRoi = clone; break;}
 					}
 				}
-				processRoi.setPosition(0,1,t);
-				if(INDEX1D){
-					processRoi.setPosition(t);
-				}
-				else{
-					processRoi.setPosition(0,1,t);
-				}
+				setRoiFrame(processRoi, t);
 				processRoi.setStrokeColor(Color.CYAN);
 				Filopart fp = new Filopart(processRoi,(Roi)baseRoi,tipRoi,pixelW,t,ind,area,baseMean,projMean,tipMean,tipThMean,bgui.sigma);
 				timeFilo.add( fp );
@@ -592,14 +559,7 @@ public class Filopodyan_ implements Command{
 		firstTrackIndex = Integer.MAX_VALUE;
 		for(int t=0;t<filo.size();t++){	//make overlay
 			if(bodyRoiArr[t]==null||filo==null||filo.size()==0){continue;}
-			int index1D = t+1;//imp.getStackIndex(1, 1, t+1); //inconsistent behaviour
-			if(INDEX1D){
-				bodyRoiArr[t].setPosition(index1D);
-			}
-			else{
-				bodyRoiArr[t].setPosition(0,1,t+1);
-			}
-			
+			setRoiFrame(bodyRoiArr[t], t+1);
 			ol.add(bodyRoiArr[t]);
 			for(int a=0;a<filo.get(t).size();a++){
 				FiloPod part = filo.get(t).get(a);
@@ -607,19 +567,11 @@ public class Filopodyan_ implements Command{
 				firstTrackIndex = (int)Math.min(firstTrackIndex, part.getIndex());
 				String str = String.valueOf(part.getIndex());
 				TextRoi label = new TextRoi( part.getBaseCoord().x/pixelW, part.getBaseCoord().y/pixelW, str, labelFont );
-				
-				if(INDEX1D){
-					part.getRoi().setPosition(index1D);
-					part.getBase().setPosition(index1D);
-					part.getTip().setPosition(index1D);
-					label.setPosition(index1D);
-				}
-				else{
-					part.getRoi().setPosition(0,1,t+1);
-					part.getBase().setPosition(0,1,t+1);
-					part.getTip().setPosition(0,1,t+1);
-					label.setPosition(0,1,t+1);
-				}
+
+				setRoiFrame(part.getRoi(), t+1);
+				setRoiFrame(part.getBase(), t+1);
+				setRoiFrame(part.getTip(), t+1);
+				setRoiFrame(label, t+1);
 				ol.add(part.getRoi());
 				ol.add(part.getBase());
 				ol.add(part.getTip());
@@ -724,12 +676,7 @@ public class Filopodyan_ implements Command{
 										if(tipBackgroundRoi!=null){
 											imp.setRoi(tipBackgroundRoi);
 											localTipBackgroundArr[t] = imp.getStatistics().mean;
-											if(INDEX1D){
-												tipBackgroundRoi.setPosition(t+1);
-											}
-											else{
-												tipBackgroundRoi.setPosition(0,1,t+1);
-											}
+											setRoiFrame(tipBackgroundRoi, t+1);
 											localBackgroundRois.add(tipBackgroundRoi);
 										}
 										Roi baseBackgroundRoi = null;
@@ -742,12 +689,7 @@ public class Filopodyan_ implements Command{
 										if(baseBackgroundRoi!=null){
 											imp.setRoi(baseBackgroundRoi);
 											localBaseBackgroundArr[t] = imp.getStatistics().mean;
-											if(INDEX1D){
-												baseBackgroundRoi.setPosition(t+1);
-											}
-											else{
-												baseBackgroundRoi.setPosition(0,1,t+1);
-											}
+											setRoiFrame(baseBackgroundRoi, t);
 											localBackgroundRois.add(baseBackgroundRoi);
 										}
 
@@ -798,36 +740,20 @@ public class Filopodyan_ implements Command{
 												if(baseBackgroundRoi!=null){
 													imp.setRoi(baseBackgroundRoi);
 													localBaseBackgroundArr[t+back] = imp.getStatistics().mean;
-													
-													if(INDEX1D){
-														baseBackgroundRoi.setPosition(t+back+1);
-													}
-													else{
-														baseBackgroundRoi.setPosition(0,1,t+back+1);
-													}
+
+													setRoiFrame(baseBackgroundRoi, t+back+1);
 													localBackgroundRois.add(baseBackgroundRoi);
 												}
 
-												if(INDEX1D){
-													backBase.setPosition(t+back+1);
-												}
-												else{
-													backBase.setPosition(0,1,t+back+1);
-												}
+												setRoiFrame(backBase, t+back+1);
 												backBase.setStrokeColor(Color.ORANGE);
 												backRoi.add(backBase);
 												TextRoi backLabel = new TextRoi(backX,backY,""+i,labelFont);
-												
-												if(INDEX1D){
-													backLabel.setPosition(t+back+1);
-												}
-												else{
-													backLabel.setPosition(0,1,t+back+1);
-												}
+												setRoiFrame(backLabel, t+back+1);
 												backLabel.setStrokeColor(Color.ORANGE);
 												backRoi.add(backLabel);
 											}
-											else{break;}
+											else break;
 										}
 									}
 								}
