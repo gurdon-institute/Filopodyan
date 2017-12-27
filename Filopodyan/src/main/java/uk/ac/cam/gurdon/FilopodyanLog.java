@@ -30,12 +30,12 @@ import ij.Prefs;
  *  @author Richard Butler
  */
 public class FilopodyanLog{
-public JFrame frame;
-private JTabbedPane pane;
-private String path = Prefs.get("FilopodyanLog.path", System.getProperty("user.home"));
-private static final String DEFAULT_TAB = "log";
-private static final FileNameExtensionFilter filter = new FileNameExtensionFilter("Filopodyan Log", "txt", "text");
-private static FilopodyanLog instance;
+	public JFrame frame;
+	private JTabbedPane pane;
+	private String path = Prefs.get("FilopodyanLog.path", System.getProperty("user.home"));
+	private static final String DEFAULT_TAB = "log";
+	private static final FileNameExtensionFilter filter = new FileNameExtensionFilter("Filopodyan Log", "txt", "text");
+	private static FilopodyanLog instance;
 
 	private FilopodyanLog(){
 	try{

@@ -1,112 +1,28 @@
 package uk.ac.cam.gurdon;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import ij.IJ;
 import ij.ImagePlus;
-import ij.gui.ShapeRoi;
-import ij.process.ImageStatistics;
 
-/** A simple method to assign filopodium identity over time
+/** Assigns filopodium identity over time. See <a href='https://imagej.net/TrackMate'>TrackMate</a> before implementing this!
  * 
  * @author Richard Butler
  */
-public class LinearAssigner{
-private ImagePlus imp;
-private int maxI;
-private boolean verbose;
-
-	/** @param imp	the image from which the filopodia were mapped
-	 * 	@param verbose	true to log additional information
- 	 */
-	public LinearAssigner(ImagePlus imp,boolean verbose){
-		this.imp = imp;
-		imp.getNFrames();
-		this.verbose = verbose;
-	}
-
-	/** Run the linear asignment algorithm. A fast 1-step algorithm is used since the same cost for two links is very unlikely using the formula:
-	 * cost = ((distance between bases + distance between tips) / sqrt(overlap area)) * time difference
-	 * 
-	 * Links are assigned by setting the FiloPod track index fields
+public interface LinearAssigner {
+	
+	/** Assign track indexes to the passed <code>ArrayList<ArrayList<FiloPod>></code>
 	 * 
 	 * @param filo	The <code>FiloPod</code> Collection for assignment. This is a List of timepoints each having a List of <code>FiloPod</code>s.
 	 * @see Filopart
-	 * @return The <code>FiloPod</code> Collection with track indices assigned for convenience
+	 * 
+	 * @param imp	The <code>ImagePlus</code> that the <code>FiloPod</code>s came from
+	 * 
+	 * @return the <code>ArrayList<ArrayList<FiloPod>></code> with indexes assigned for convenience
 	 */
-	public ArrayList<ArrayList<FiloPod>> run(ArrayList<ArrayList<FiloPod>> filo){
-		assign(filo);
-		return filo;
-	}
+	public ArrayList<ArrayList<FiloPod>> assign(ArrayList<ArrayList<FiloPod>> filo, ImagePlus imp);
 	
-	private double cost(FiloPod f1, FiloPod f2, ImagePlus imp){
-		double cost = Double.POSITIVE_INFINITY;
-	try{
-		IJ.run(imp, "Select None", "");
-		ShapeRoi intersection = new ShapeRoi(f1.getRoi()).and(new ShapeRoi(f2.getRoi()));
-		imp.setRoi(intersection);
-		if(imp.getRoi()==null){return Double.POSITIVE_INFINITY;}
-		double overlap = imp.getStatistics(ImageStatistics.AREA).area;
-		IJ.run(imp, "Select None", "");
-		
-		double gapScale = (double)f2.getT() - f1.getT();
-		double dist1 = f1.baseDistance(f2);
-		double dist2 = f1.baseDistance(f2);
-		
-		cost = ( (dist1+dist2)/Math.sqrt(overlap) )*gapScale;
-		if(verbose){FilopodyanLog.get().print(imp.getTitle(), f1.getIndex()+" - "+f2.getIndex()+" cost = "+cost);}
-	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
-		return cost;
-	}
-	
-	private void assign(ArrayList<ArrayList<FiloPod>> filo){
-	try{
-		maxI = -1;
-		int nFilo = filo.size();
-		for(int t=0;t<nFilo;t++){
-			if(verbose){FilopodyanLog.get().print(imp.getTitle(), "Linear assignment T"+t+"+");}
-			if(filo.get(t).size()==0){
-				FilopodyanLog.get().print(imp.getTitle(), imp.getTitle()+" - no filopodia at T"+t);
-				continue;
-			}
-			
-			for(int a=0;a<filo.get(t).size();a++){
-				
-				FiloPod partA = filo.get(t).get(a);
-				partA.setJoinCost(Double.MAX_VALUE);
-				double minCost = Double.MAX_VALUE;	//big number, but less than infinity (cost for rejected links)
-				int minI = -1;
-				maxI = Math.max(maxI,partA.getIndex());
-				int gap = 1;
-				if(t<nFilo-1){
-					for(int b=0;b<filo.get(t+1).size();b++){
-						FiloPod partB = filo.get(t+1).get(b);
-						double cost = cost(partA,partB,imp);
-						if(cost<minCost&&cost<partB.getJoinCost()){
-							minCost = cost;
-							minI = b;
-							gap = 1;
-						}
-					}
-				}
-				if(t<nFilo-2&&minI==-1&&filo.get(t+2).size()>0){
-					for(int c=0;c<filo.get(t+2).size();c++){
-						FiloPod partC = filo.get(t+2).get(c);
-						double cost = cost(partA,partC,imp);
-						if(cost<minCost&&cost<partC.getJoinCost()){
-							minCost = cost;
-							minI = c;
-							gap = 2;
-						}
-					}
-				}
-				if(minI>-1){
-					filo.get(t+gap).get(minI).setIndex(partA.getIndex());
-					filo.get(t+gap).get(minI).setJoinCost(minCost);
-				}
-			}
-		}
-	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
-	}
+	/** Compute and return the cost of joining two <code>FiloPod</code>s in this image
+	 */
+	public double cost(FiloPod f1, FiloPod f2, ImagePlus imp);
 	
 }

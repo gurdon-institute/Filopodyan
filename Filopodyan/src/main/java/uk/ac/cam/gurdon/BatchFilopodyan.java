@@ -69,7 +69,7 @@ private Timer timer;
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/** Creates the batch mode dialog, calls <code>FilopodyanGui.makeFrame()</code> and adds additonal fields to take filter parameters.
+	/** Creates the batch mode dialog, calls <code>FilopodyanGui.makeFrame()</code> and adds additional fields to take filter parameters.
 	 * @see FilopodyanGui
 	 */
 	public void createDialog(){

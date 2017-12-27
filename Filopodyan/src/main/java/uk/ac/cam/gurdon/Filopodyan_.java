@@ -67,7 +67,6 @@ public class Filopodyan_ implements Command{
 	private static final double defaultPixelW = 0.065; //Vasja's 63x objective
 	private static final Font labelFont = new Font(Font.MONOSPACED,Font.BOLD,14);
 	public boolean batch = false;
-	//private static final boolean INDEX1D = false;	//Overlay Roi slice index behaviour is inconsistent between versions, this sets the Roi.setPosition method to use
 	private static final Color frameBackgroundColor = new Color(0, 0, 255, 32);
 	private static final Color boundaryBackgroundColor = new Color(255, 0, 0, 32);
 	private static final Color localBackgroundColor = new Color(0, 255, 0, 32);
@@ -442,8 +441,8 @@ public class Filopodyan_ implements Command{
 			filo.add(timeFilo);
 		}
 		IJ.run(imp, "Select None", "");	
-		LinearAssigner LA1 = new LinearAssigner(imp,bgui.verbose);
-		filo = LA1.run(filo);
+		LinearAssigner LA1 = new OneStepAssigner(bgui.verbose);
+		filo = LA1.assign(filo, imp);
 		doOverlay();
 		
 		imp.setOverlay(ol);
@@ -507,8 +506,8 @@ public class Filopodyan_ implements Command{
 	 */
 	public void filtered(ArrayList<ArrayList<FiloPod>> backPass){
 		filo = backPass;
-		LinearAssigner LA2 = new LinearAssigner(imp,bgui.verbose);
-		filo = LA2.run(filo);
+		LinearAssigner LA2 = new OneStepAssigner(bgui.verbose);
+		filo = LA2.assign(filo, imp);
 		calculateDCMs();
 		TrackEditor trackEditor = new TrackEditor(filo,this);
 		if(batch){
