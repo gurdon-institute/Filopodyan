@@ -260,7 +260,14 @@ private Timer timer;
 			bounder.setImp(image);
 			bounder.batch = true;
 			bounder.bgui = bb;
-			bounder.filopodia(false);
+			FilopodyanProcessor fp = null;
+			if(adaptive){
+				fp = new ALTProcessor();
+			}
+			else{
+				fp = new LoGProcessor();
+			}
+			bounder.filopodia(false, fp);
 			image.close();
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}	
 		}		

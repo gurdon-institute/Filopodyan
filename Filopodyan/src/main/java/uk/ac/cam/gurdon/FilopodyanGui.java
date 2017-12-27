@@ -592,7 +592,14 @@ private JLabel workLabel;
 					long t = System.currentTimeMillis();
 					preview = false;
 					setPrefs();
-					parent.filopodia(false);
+					FilopodyanProcessor fp = null;
+					if(adaptive){
+						fp = new ALTProcessor();
+					}
+					else{
+						fp = new LoGProcessor();
+					}
+					parent.filopodia(false, fp);
 					if(time){log.print(parent.imp.getTitle(), "Mapping took "+IJ.d2s((System.currentTimeMillis()-t)*0.001,2)+" seconds");}
 					return null;
 				}
@@ -613,7 +620,14 @@ private JLabel workLabel;
 			if(verbose){log.print(parent.imp.getTitle(), "Filopodyan preview");}
 			setPrefs();
 			long t = System.currentTimeMillis();
-			parent.filopodia(true);
+			FilopodyanProcessor fp = null;
+			if(adaptive){
+				fp = new ALTProcessor();
+			}
+			else{
+				fp = new LoGProcessor();
+			}
+			parent.filopodia(true, fp);
 			if(time){log.print(parent.imp.getTitle(), "Filopodyan preview took "+IJ.d2s((System.currentTimeMillis()-t)*0.001,2)+" seconds");}
 		}
 		else if(event=="Log Settings"){

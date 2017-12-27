@@ -18,7 +18,7 @@ import ij.IJ;
 import ij.Prefs;
 import ij.measure.Calibration;
 
-/** Filters a Collection of <code>Filopart</code>s according to user-defined parameters.
+/** Filters a Collection of <code>FiloPod</code>s according to user-defined parameters.
  * 
  * @author Richard Butler
  */

@@ -84,8 +84,8 @@ public class Filopodyan_ implements Command{
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
-	/**
-	 * Sets the image to be the target of all other operations.
+	/** Sets the image to be the target of all other operations.
+	 * 
 	 * @param image 	The target ImagePlus
 	 */
 	public void setImp(ImagePlus image){
@@ -164,7 +164,7 @@ public class Filopodyan_ implements Command{
 	 * @see ProcessProcessor
 	 * @see Tipper
 	*/	
-	public void filopodia(boolean prev){
+	public void filopodia(boolean prev, FilopodyanProcessor filoProcessor){
 	try{
 		bgui.setLabel("mapping processes<br>"+title);
 		if(bgui.verbose){bgui.log.print(title, "Mapping processes in "+title);}
@@ -193,12 +193,12 @@ public class Filopodyan_ implements Command{
 		if(bgui.adaptive){
 			bgui.setLabel("adaptive thresholding<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Running adaptive thresholding");}
-			map = FilopodyanProcessor.ALT(imp,bgui.mapC,tStart, tEnd, bgui.threshold, bgui.sigma, bgui.verbose);
+			map = filoProcessor.process(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
 		}
 		else{
 			bgui.setLabel("Laplacian of Gaussian<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Running Laplacian of Gaussian");}
-			map = FilopodyanProcessor.LoG(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
+			map = filoProcessor.process(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
 		} 
 		
 		if(userRoi!=null){
