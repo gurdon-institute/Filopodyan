@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 
 /** <code>JComponent</code> to display an object in a <code>TrackEditor</code>.
+ * @see TrackEditor
  *  
  * @author Richard Butler
  */

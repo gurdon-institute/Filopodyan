@@ -39,7 +39,7 @@ private double pixW;
 private ArrayList<ArrayList<FiloPod>> filo, original;
 
 	/** 
-	 * @param filo	The Filopart Collection to be filtered. This is a List of timepoints each having a List of FiloParts.
+	 * @param filo	The Filopart Collection to be filtered. This is a List of timepoints each having a List of <code>FiloPod</code>s.
 	 * @param maxIndex	The maximum Filopart index used in filo
 	 * @param parent	The parent Filopodyan_ PlugIn instance
 	 * @see Filopart

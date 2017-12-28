@@ -159,8 +159,9 @@ public class Filopodyan_ implements Command{
 	/** Detects filopodia in the image.
 	 * 
 	 * @param prev	true to run a preview, mapping only the currently displayed frame, false to run on all frames and continue to filtering and tracking
-	 * @see Filopart
-	 * @see FilopodyanProcessor
+	 * @param filoProcessor	the <code>FilopodyanProcessor</code> to use to generate the binary mask
+	 * @see LoGProcessor
+	 * @see ALTProcessor
 	 * @see ProcessProcessor
 	 * @see Tipper
 	*/	
@@ -779,7 +780,6 @@ public class Filopodyan_ implements Command{
 								}
 
 								if(tipCoordArr[t]!=null){	//if it has a tip at this t
-									//ctrow++;
 									filoRT.setValue("Proj Mean ("+i+")",rtrow,projMeanArr[t]);
 									filoRT.setValue("Tip Mean ("+i+")",rtrow,tipMeanArr[t]);
 									filoRT.setValue("Tip Th Mean ("+i+")",rtrow,tipThMeanArr[t]);
@@ -929,6 +929,8 @@ public class Filopodyan_ implements Command{
 	
 
 	@Override
+	/** Run as <code>org.scijava.command.Command</code>. Create and show a <code>FilopodyanGui</code> if an image is open or a <code>BatchFilopodyan</code> if there are no images.
+	 */
 	public void run(){
 	try{
 		if(WindowManager.getImageCount()==0){

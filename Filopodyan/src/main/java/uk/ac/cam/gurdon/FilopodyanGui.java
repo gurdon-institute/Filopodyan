@@ -72,7 +72,7 @@ public static final String helpText =
 "<html>"+
 "<body style=\"font-family:arial,sans-serif;font-size:14pt;font-weight:normal;background-color:white;padding:10px;\">"+
 "<h3 align=\"center\" style=\"font-size:18pt;\">Filopodyan Help</h3>"+
-"<p>Filopodial Dynamics Analysis<br>"+
+"<p><b>Filopo</b>dia <b>Dy</b>namics <b>An</b>alysis<br>"+
 "Filopodyan maps growth cone boundaries, identifies processes and tracks them over time. It uses LoG processing to enhance local intensity gradients, "+
 "a choice of ImageJ thresholding algorithms to create binary masks, erosion followed by dilation to segment processes from the cell body, and "+
 "tracks processes over time using a rapid one-step linear assignment algorithm. Tracked processes can be filtered by various parameters and then "+

@@ -7,7 +7,7 @@ import ij.ImagePlus;
 import ij.gui.ShapeRoi;
 import ij.process.ImageStatistics;
 
-/** A simple method to assign filopodium identity over time. A fast 1-step algorithm is used since the same cost for two links is very unlikely using this formula:
+/** A simple method to assign filopodium identity over time. A fast 1-step algorithm is used since the same cost for two links is very unlikely using this formula:<br>
  * cost = ((distance between bases + distance between tips) / sqrt(overlap area)) * time difference
  * 
  * @author Richard Butler
@@ -23,13 +23,10 @@ public class OneStepAssigner implements LinearAssigner{
 	}
 	
 	/** Calculate the cost of joining two <code>FiloPod</code>s in this image.
-	 * 	Takes into account the distance between the tips and bases of the processes, the area of overlap between them and the time difference:
+	 * 	Takes into account the distance between the tips and bases of the processes, the area of overlap between them and the time difference:<br>
 	 * 
 	 * cost = ((distance between bases + distance between tips) / sqrt(overlap area)) * time difference
 	 * 
-	 * @param f1	<code>FiloPod</code> for joining
-	 * @param f2	<code>FiloPod</code> for joining
-	 * @return the cost of joining these two <code>FiloPod</code>s
 	 */
 	public double cost(FiloPod f1, FiloPod f2, ImagePlus imp){
 		double cost = Double.POSITIVE_INFINITY;
@@ -51,11 +48,7 @@ public class OneStepAssigner implements LinearAssigner{
 		return cost;
 	}
 	
-	/** Run the linear assignment algorithm. A fast 1-step algorithm is used since the same cost for two links is very unlikely using the cost formula
-	 *  in this implementation.
-	 * 
-	 * 
-	 * Links are assigned by setting the FiloPod track index fields
+	/** One step linear assignment.
 	 * 
 	 * @param filo	The <code>FiloPod</code> Collection for assignment. This is a List of timepoints each having a List of <code>FiloPod</code>s.
 	 * @see Filopart
