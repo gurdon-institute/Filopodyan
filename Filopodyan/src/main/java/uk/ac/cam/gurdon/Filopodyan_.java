@@ -19,6 +19,7 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.WindowManager;
@@ -148,8 +149,10 @@ public class Filopodyan_ implements Command{
 	
 	//set the position of a Roi using 1 dimension for a stack or 3 dimensions for a hyperstack
 	private void setRoiFrame(Roi roi, int t){
+		System.out.println(C);
 		if(C==1){
-			roi.setPosition(1,1,t);
+			int index = imp.getStackIndex(1, 1, t);
+			roi.setPosition( index );
 		}
 		else{
 			roi.setPosition(t);
@@ -990,16 +993,12 @@ public class Filopodyan_ implements Command{
 			image.show();
 	    }*/
 		
-	    final ij.ImageJ ij = new ij.ImageJ();
-		ImagePlus img = new ImagePlus("E:\\Vasja\\testing_220716\\smalltest.tif");
-		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 31);
-		image.setDisplayMode(IJ.COLOR);
-		image.show();
-		ij.addWindowListener(new WindowAdapter(){
-			public void windowClosing(WindowEvent we){
-				System.exit(1);
-			}
-		});
+//	    final ij.ImageJ ij = new ij.ImageJ();
+		ImageJ.main(arg);
+		ImagePlus img = new ImagePlus("/Users/tinevez/Desktop/growth-cone-test-file.tif");
+//		final ImagePlus image = HyperStackConverter.toHyperStack(img, 1, 1, 21);
+//		image.setDisplayMode(IJ.COLOR);
+		img.show();
 	    
 		new Filopodyan_().run();
 	}
