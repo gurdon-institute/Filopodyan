@@ -4,8 +4,6 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
@@ -149,7 +147,7 @@ public class Filopodyan_ implements Command{
 	
 	//set the position of a Roi using 1 dimension for a stack or 3 dimensions for a hyperstack
 	private void setRoiFrame(Roi roi, int t){
-		System.out.println(C);
+		//System.out.println(C);
 		if(C==1){
 			int index = imp.getStackIndex(1, 1, t);
 			roi.setPosition( index );
@@ -625,7 +623,7 @@ public class Filopodyan_ implements Command{
 						new BoundaryAnalyser(bgui,imp).run(filo,bodyRoiArr);
 					}
 
-					doOverlay();
+					//doOverlay();
 
 					filoRT = new ResultsTable();
 					filoRT.showRowNumbers(false);
@@ -995,10 +993,10 @@ public class Filopodyan_ implements Command{
 		
 //	    final ij.ImageJ ij = new ij.ImageJ();
 		ImageJ.main(arg);
-		ImagePlus img = new ImagePlus("/Users/tinevez/Desktop/growth-cone-test-file.tif");
-//		final ImagePlus image = HyperStackConverter.toHyperStack(img, 1, 1, 21);
-//		image.setDisplayMode(IJ.COLOR);
-		img.show();
+		ImagePlus img = new ImagePlus("E:\\Vasja\\230517_hang\\growth-cone-test-file.tif");
+		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 121);
+		image.setDisplayMode(IJ.COLOR);
+		image.show();
 	    
 		new Filopodyan_().run();
 	}

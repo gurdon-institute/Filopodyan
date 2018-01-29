@@ -11,7 +11,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   
   <groupId>uk.ac.cam.gurdon</groupId>
   <artifactId>Filopodyan</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
   <name>Filopodyan</name>
   <description>Filopodyan</description>
   
@@ -55,25 +55,20 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<id>rb7777</id>
 			<name>Richard Butler</name>
 			<url>https://www.gurdon.cam.ac.uk/</url>
-			<roles>
-				<role>developer</role>
-			</roles>
+			<roles><role>developer</role></roles>
 		</developer>
 		<developer>
 			<id>vu203</id>
 			<name>Vasja Urbancic</name>
 			<url>https://www.gurdon.cam.ac.uk/</url>
-			<roles>
-				<role>developer</role>
-			</roles>
+			<roles><role>developer</role></roles>
 		</developer>
 	</developers>
 	<contributors>
 		<contributor>
-			<name>name</name>
-			<url>http://imagej.net/</url>
+			<name>Jean-Yves Tinevez</name>
+			<url>https://research.pasteur.fr/en/member/jean-yves-tinevez/</url>
 			<roles><role>developer</role></roles>
-			<properties><id>id</id></properties>
 		</contributor>
 	</contributors>
 
