@@ -96,6 +96,9 @@ public class Filopodyan_ implements Command{
 		C = imp.getNChannels();
 		Z = imp.getNSlices();
 		T = imp.getNFrames();
+		
+		//imp = HyperStackConverter.toHyperStack(imp, C, Z, T); //ensure default XYCZT dimension order
+		
 		Calibration cal = imp.getCalibration();
 		pixelW = cal.pixelWidth;
 		unit = imp.getCalibration().getUnit();
@@ -146,7 +149,7 @@ public class Filopodyan_ implements Command{
 	}
 	
 	//set the position of a Roi using 1 dimension for a stack or 3 dimensions for a hyperstack
-	private void setRoiFrame(Roi roi, int t){
+	/*private void setRoiFrame(Roi roi, int t){
 		//System.out.println(C);
 		if(C==1){
 			int index = imp.getStackIndex(1, 1, t);
@@ -155,6 +158,16 @@ public class Filopodyan_ implements Command{
 		else{
 			roi.setPosition(t);
 		}
+	}*/
+	
+	//Roi positioning from ij.plugin.OverlayCommands
+	private void setRoiFrame(Roi roi, int t){
+        if (imp.isHyperStack()||imp.isComposite()) {
+            roi.setPosition(0, 0, t);
+        }
+        else{
+            roi.setPosition(t);
+        }
 	}
 	
 	/** Detects filopodia in the image.
@@ -278,9 +291,8 @@ public class Filopodyan_ implements Command{
 			if(body.getRoi()!=null&&body.getStatistics().mean==0){
 				IJ.run(body, "Make Inverse", "");
 			}
-			Roi bodyRoi = new Roi(0,0,0,0);
 			if(body.getRoi()!=null){
-				bodyRoi = body.getRoi();
+				Roi bodyRoi = body.getRoi();
 				bodyRoi.setStrokeColor(Color.RED);
 				setRoiFrame(bodyRoi, tStart);
 				prevol.add(bodyRoi);
@@ -547,9 +559,9 @@ public class Filopodyan_ implements Command{
 		}
 	}
 	
-	/** Creates the <code>Overlay</code> from the current <code>FiloPart</code>s
+	/** Creates the <code>Overlay</code> from the current <code>FiloPod</code>s
 	 * 
-	 * @see Filopart
+	 * @see FiloPod, Filopart
 	 */
 	public void doOverlay(){
 	try{
@@ -815,8 +827,9 @@ public class Filopodyan_ implements Command{
 								}
 							}
 						}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
-						doOverlay();
+						//doOverlay();
 					}
+					doOverlay();
 					bgui.setLabel("outputting results<br>"+title);
 					if(bgui.filoTable){
 						//set zeros representing absence of an object to NaN before showing the table
@@ -884,7 +897,7 @@ public class Filopodyan_ implements Command{
 					if(!batch){bgui.workFrame.dispose();}
 					setImageVisible(true);
 					if(bgui.verbose){
-						bgui.log.print(title, "Bounder finished");
+						bgui.log.print(title, "Filopodyan finished");
 					}
 
 					if(batch){
@@ -993,8 +1006,10 @@ public class Filopodyan_ implements Command{
 		
 //	    final ij.ImageJ ij = new ij.ImageJ();
 		ImageJ.main(arg);
-		ImagePlus img = new ImagePlus("E:\\Vasja\\230517_hang\\growth-cone-test-file.tif");
-		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 121);
+		//ImagePlus img = new ImagePlus("E:\\Vasja\\230517_hang\\growth-cone-test-file.tif");
+		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 121);
+		ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
+		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
 		image.setDisplayMode(IJ.COLOR);
 		image.show();
 	    
