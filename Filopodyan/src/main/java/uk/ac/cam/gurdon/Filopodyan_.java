@@ -130,9 +130,11 @@ public class Filopodyan_ implements Command{
 				double area = target.getStatistics().area;
 				if(area>maxA){maxA=area;maxI=i;}
 			}
-			target.setRoi(split[maxI]);
-			IJ.setBackgroundColor(0, 0, 0);
-			IJ.run(target, "Clear Outside", "slice");
+			if(maxI>-1){
+				target.setRoi(split[maxI]);
+				IJ.setBackgroundColor(0, 0, 0);
+				IJ.run(target, "Clear Outside", "slice");
+			}
 		}
 			IJ.run(target, "Select None", "");
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
@@ -346,6 +348,9 @@ public class Filopodyan_ implements Command{
 			}
 			if(body.getRoi()==null){
 				bgui.log.print(title, title+" - no growth cone body found at T"+t);
+				while(bodyRT.getCounter()<t){
+					bodyRT.setValue("T", bodyRT.getCounter(), Double.NaN);
+				}
 				bodyRT.setValue("T",t,t);
 				continue;
 			}
@@ -1004,12 +1009,11 @@ public class Filopodyan_ implements Command{
 			image.show();
 	    }*/
 		
-//	    final ij.ImageJ ij = new ij.ImageJ();
 		ImageJ.main(arg);
-		//ImagePlus img = new ImagePlus("E:\\Vasja\\230517_hang\\growth-cone-test-file.tif");
-		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 121);
-		ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
-		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
+		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
+		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
+		ImagePlus img = new ImagePlus("E:\\Jenny Gallop\\fly_figure\\MAX_2016-0330-fascinGFP enGal4 UAS-cd8mCherry.lif - Series006-6T.tif");
+		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 6);
 		image.setDisplayMode(IJ.COLOR);
 		image.show();
 	    

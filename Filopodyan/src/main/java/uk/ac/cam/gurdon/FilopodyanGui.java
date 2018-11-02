@@ -99,7 +99,7 @@ public static final String helpText =
 "<li>Max mean waviness: the maximum waviness calculated as the mean of 1-straightness over the life of the process.</li>"+
 "</ul></p>"+
 "<p style='font-size:8px;'>Filopodyan was developed at the Gurdon Institute by Richard Butler and Vasja Urbancic.<br><br>"+
-"Copyright 2016 2017, Richard Butler<br>"+
+"Copyright 2016 2017 2018, Richard Butler<br>"+
 "Filopodyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by "+
 "the Free Software Foundation, either version 3 of the License, or (at your option) any later version."+
 "Filopodyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of "+
