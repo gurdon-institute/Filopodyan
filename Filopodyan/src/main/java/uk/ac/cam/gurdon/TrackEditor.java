@@ -479,7 +479,7 @@ public class TrackEditor{
 			}
 			else{
 				maxW = DISPLAY.width-600+width+gap;
-				maxH = DISPLAY.height-100+height+gap;
+				maxH = DISPLAY.height-200+height+gap;
 			}
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 		

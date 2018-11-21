@@ -1012,8 +1012,8 @@ public class Filopodyan_ implements Command{
 		ImageJ.main(arg);
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
 		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
-		ImagePlus img = new ImagePlus("E:\\Jenny Gallop\\fly_figure\\MAX_2016-0330-fascinGFP enGal4 UAS-cd8mCherry.lif - Series006-6T.tif");
-		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 6);
+		ImagePlus img = new ImagePlus("E:\\Jenny Gallop\\fly_figure\\fascin_analysis\\project_areas_time\\68,176_MAX_2016-1207-GFPfascin enGal4 UAS-cd8mCherry.lif - Series032 - 1E10.tif");
+		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 40);
 		image.setDisplayMode(IJ.COLOR);
 		image.show();
 	    
