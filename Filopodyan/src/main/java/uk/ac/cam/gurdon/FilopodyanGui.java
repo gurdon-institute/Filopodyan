@@ -243,12 +243,12 @@ private JLabel workLabel;
 		JPanel mapPanel = new JPanel();
 		mapPanel.add(new JLabel("Map C"));
 		mapCombo = new JComboBox<String>(chans);
-		mapCombo.setSelectedItem(mapC);
+		mapCombo.setSelectedItem(""+mapC);
 		mapPanel.add(mapCombo);
 		JPanel measurePanel = new JPanel();
 		measurePanel.add(new JLabel("Measure C"));
 		measureCombo = new JComboBox<String>(chans);
-		measureCombo.setSelectedItem(measureC);
+		measureCombo.setSelectedItem(""+measureC);
 		measurePanel.add(measureCombo);
 		add(makePanel(BASIC, mapPanel, measurePanel, advPan));
 		
