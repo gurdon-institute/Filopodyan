@@ -58,26 +58,26 @@ public class Filopart implements FiloPod{
 	 */
 	public Filopart(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
 		try{
-		this.roi = r;
-		this.pixW = pixW;
-		this.T = t;
-		this.index = i;
-		this.area = a;
-		this.base = base;
-		this.tip = tip;
-		this.baseMean = meanB;
-		this.projMean = meanP;
-		this.tipMean = meanT;
-		this.tipThMean = meanThT;
-		Rectangle rectb = base.getBounds();
-		this.baseCoord = new Point2d( (rectb.x+(rectb.width/2))*pixW, (rectb.y+(rectb.height/2))*pixW);
-		Rectangle rectt = tip.getBounds();
-		this.tipCoord = new Point2d( (rectt.x+(rectt.width/2))*pixW, (rectt.y+(rectt.height/2))*pixW);
-		this.joinCost = Double.MAX_VALUE;
-		this.dctm = 0d;
-		this.dcbm = 0d;
-		this.sigma = sigma;
-		this.length = Double.NaN;
+			this.roi = r;
+			this.pixW = pixW;
+			this.T = t;
+			this.index = i;
+			this.area = a;
+			this.base = base;
+			this.tip = tip;
+			this.baseMean = meanB;
+			this.projMean = meanP;
+			this.tipMean = meanT;
+			this.tipThMean = meanThT;
+			Rectangle rectb = base.getBounds();
+			this.baseCoord = new Point2d( (rectb.x+(rectb.width/2))*pixW, (rectb.y+(rectb.height/2))*pixW);
+			Rectangle rectt = tip.getBounds();
+			this.tipCoord = new Point2d( (rectt.x+(rectt.width/2))*pixW, (rectt.y+(rectt.height/2))*pixW);
+			this.joinCost = Double.MAX_VALUE;
+			this.dctm = 0d;
+			this.dcbm = 0d;
+			this.sigma = sigma;
+			this.length = Double.NaN;
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	
@@ -87,24 +87,24 @@ public class Filopart implements FiloPod{
 	 */
 	public Filopart(Filopart copy){
 		try{
-		this.roi = (Roi)copy.roi.clone();
-		this.pixW = copy.pixW;
-		this.T = copy.T;
-		this.index = copy.index;
-		this.area = copy.area;
-		this.base = copy.base;
-		this.tip = copy.tip;
-		this.baseMean = copy.baseMean;
-		this.projMean = copy.projMean;
-		this.tipMean = copy.tipMean;
-		this.tipThMean = copy.tipThMean;
-		this.baseCoord = copy.baseCoord;
-		this.tipCoord = copy.tipCoord;
-		this.joinCost = copy.joinCost;
-		this.dctm = copy.dctm;
-		this.dcbm = copy.dcbm;
-		this.sigma = copy.sigma;
-		this.length = copy.length;
+			this.roi = (Roi)copy.roi.clone();
+			this.pixW = copy.pixW;
+			this.T = copy.T;
+			this.index = copy.index;
+			this.area = copy.area;
+			this.base = copy.base;
+			this.tip = copy.tip;
+			this.baseMean = copy.baseMean;
+			this.projMean = copy.projMean;
+			this.tipMean = copy.tipMean;
+			this.tipThMean = copy.tipThMean;
+			this.baseCoord = copy.baseCoord;
+			this.tipCoord = copy.tipCoord;
+			this.joinCost = copy.joinCost;
+			this.dctm = copy.dctm;
+			this.dcbm = copy.dcbm;
+			this.sigma = copy.sigma;
+			this.length = copy.length;
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 	

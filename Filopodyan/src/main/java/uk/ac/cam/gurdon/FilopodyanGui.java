@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -45,6 +47,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Utilities;
 
 import ij.IJ;
@@ -73,6 +77,14 @@ public static final String helpText =
 "<body style=\"font-family:arial,sans-serif;font-size:14pt;font-weight:normal;background-color:white;padding:10px;\">"+
 "<h3 align=\"center\" style=\"font-size:18pt;\">Filopodyan Help</h3>"+
 "<p><b>Filopo</b>dia <b>Dy</b>namics <b>An</b>alysis<br>"+
+
+"<p>"+
+"<a href=\"http://jcb.rupress.org/content/216/10/3405\">Filopodyan: An open-source pipeline for the analysis of filopodia</a><br>"+
+"<span style=\"font-size:12pt;\">Vasja Urbančič, Richard Butler, Benjamin Richier, Manuel Peter, Julia Mason, Frederick J. Livesey, Christine E. Holt, Jennifer L. Gallop</span><br>"+
+"<span style=\"font-size:12pt;font-style:italic;\">J Cell Biol Oct 2017, 216 (10) 3405-3422; DOI: 10.1083/jcb.201705113</span><br>"+
+"<br></p>"+
+
+
 "Filopodyan maps growth cone boundaries, identifies processes and tracks them over time. It uses LoG processing to enhance local intensity gradients, "+
 "a choice of ImageJ thresholding algorithms to create binary masks, erosion followed by dilation to segment processes from the cell body, and "+
 "tracks processes over time using a rapid one-step linear assignment algorithm. Tracked processes can be filtered by various parameters and then "+
@@ -475,6 +487,20 @@ private JLabel workLabel;
 			helpFrame.add(BorderLayout.NORTH, headerPan);
 			final JEditorPane textPane = new JEditorPane("text/html", helpText);
 			textPane.setEditable(false);
+
+			textPane.addHyperlinkListener(new HyperlinkListener() {
+                @Override
+                public void hyperlinkUpdate(HyperlinkEvent hle) {
+                    if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+                        try {
+                        	Desktop.getDesktop().browse(hle.getURL().toURI());
+                        } catch (Exception e) {
+                        	JOptionPane.showMessageDialog(helpFrame, "Could not access "+hle.getURL()+"\n"+e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+
 			textPane.setSelectionColor(Color.YELLOW);
 			MouseAdapter helpMenuListen = new MouseAdapter(){
 				public void mouseClicked(MouseEvent me){
