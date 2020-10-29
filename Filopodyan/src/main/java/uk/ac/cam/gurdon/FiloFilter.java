@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,7 +34,6 @@ private double dctm = Prefs.get("Filopodyan.dctm",0d);
 private double dcbm = Prefs.get("Filopodyan.dcbm",0d);
 private double waviness = Prefs.get("Filopodyan.waviness",1d);
 private int start = (int)Math.round(Prefs.get("Filopodyan.start",1));
-private int maxIndex;
 private String unit;
 private double pixW;
 private ArrayList<ArrayList<FiloPod>> filo, original;
@@ -44,10 +44,9 @@ private ArrayList<ArrayList<FiloPod>> filo, original;
 	 * @param parent	The parent Filopodyan_ PlugIn instance
 	 * @see Filopart
 	 */
-	public FiloFilter(ArrayList<ArrayList<FiloPod>> filo, int maxIndex, Filopodyan_ parent){
+	public FiloFilter(ArrayList<ArrayList<FiloPod>> filo, Filopodyan_ parent){
 	try{
 		this.filo = filo;
-		this.maxIndex = maxIndex;
 		this.parent = parent;
 		Calibration cal = parent.imp.getCalibration();
 		this.pixW = cal.pixelWidth;
@@ -135,7 +134,14 @@ private ArrayList<ArrayList<FiloPod>> filo, original;
 		ArrayList<ArrayList<FiloPod>> filtered = new ArrayList<ArrayList<FiloPod>>();
 	try{
 		int T = filo.size();
-		for(int i=0;i<maxIndex;i++){
+		//get unique track indices
+		HashSet<Integer> trackIndices = new HashSet<Integer>();
+		for(ArrayList<FiloPod> tlist:filo){
+			for(FiloPod fp:tlist){
+				trackIndices.add( fp.getIndex() );
+			}
+		}
+		for(int i : trackIndices){
 			ArrayList<ArrayList<FiloPod>> toAdd = new ArrayList<ArrayList<FiloPod>>();
 			int exists = 0;
 			double longest = 0d;

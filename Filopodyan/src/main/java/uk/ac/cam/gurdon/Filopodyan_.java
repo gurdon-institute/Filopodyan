@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -49,7 +50,7 @@ public class Filopodyan_ implements Command{
 	public ImagePlus imp;
 	private ImagePlus map,body,proj;
 	public FilopodyanGui bgui;
-	public int W,H,C,Z,T,ind,tStart,tEnd,firstTrackIndex;
+	public int W,H,C,Z,T,tStart,tEnd,firstTrackIndex;
 	public String title,sanTitle;
 	private String unit;
 	private double pixelW;
@@ -319,7 +320,7 @@ public class Filopodyan_ implements Command{
 		bodyRT.showRowNumbers(false);
 		bodyRoiArr = new ShapeRoi[tEnd];
 		bodyMean = new double[tEnd];
-		ind = -1;
+		int ind = -1;	//index to use, incremented before adding a new track
 		for(int t=tStart;t<=tEnd;t++){
 			bgui.setLabel("mapping processes T"+t+"<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Analysing objects at T"+t);}
@@ -473,7 +474,7 @@ public class Filopodyan_ implements Command{
 		
 		calculateDCMs();
 		
-		FiloFilter cf = new FiloFilter(filo,ind,this);
+		FiloFilter cf = new FiloFilter(filo, this);
 		if(batch){
 			cf.batchFilter((BatchFilopodyan)bgui);
 		}
@@ -488,7 +489,14 @@ public class Filopodyan_ implements Command{
 	
 	private void calculateDCMs(){
 	try{
-		for(int i=0;i<ind;i++){
+		//get unique track indices
+		HashSet<Integer> trackIndices = new HashSet<Integer>();
+		for(ArrayList<FiloPod> tlist:filo){
+			for(FiloPod fp:tlist){
+				trackIndices.add( fp.getIndex() );
+			}
+		}
+		for(int i : trackIndices){
 			Point2d tipLast = new Point2d();
 			Point2d baseLast = new Point2d();
 			int lastT = -100;
@@ -654,7 +662,16 @@ public class Filopodyan_ implements Command{
 						coordRT.setValue("dT",t,bgui.backFrames+t);
 					}
 
-					for(int i=0;i<ind;i++){
+					
+					//get unique track indices
+					HashSet<Integer> trackIndices = new HashSet<Integer>();
+					for(ArrayList<FiloPod> tlist:filo){
+						for(FiloPod fp:tlist){
+							trackIndices.add( fp.getIndex() );
+						}
+					}
+
+					for(int i : trackIndices){
 						bgui.setLabel("analysing track "+i+"<br>"+title);
 						if(bgui.verbose){bgui.log.print(title, "Measuring track "+i);}
 						double[] baseMeanArr = new double[T];
@@ -1012,9 +1029,10 @@ public class Filopodyan_ implements Command{
 		ImageJ.main(arg);
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
 		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
-		ImagePlus img = new ImagePlus("E:\\Jenny Gallop\\fly_figure\\fascin_analysis\\project_areas_time\\68,176_MAX_2016-1207-GFPfascin enGal4 UAS-cd8mCherry.lif - Series032 - 1E10.tif");
-		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 40);
-		image.setDisplayMode(IJ.COLOR);
+		
+		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 40);
+		//image.setDisplayMode(IJ.COLOR);
+		ImagePlus image = new ImagePlus("C:\\Users\\USER\\work\\data\\growth-cone-test-file.tif");
 		image.show();
 	    
 		new Filopodyan_().run();
