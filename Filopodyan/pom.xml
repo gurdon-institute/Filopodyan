@@ -5,13 +5,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>13.0.0</version>
+		<version>26.0.0</version>
 		<relativePath />
 	</parent>
   
   <groupId>uk.ac.cam.gurdon</groupId>
   <artifactId>Filopodyan</artifactId>
-  <version>1.2.6</version>
+  <version>1.2.7</version>
   <name>Filopodyan</name>
   <description>Filopodyan</description>
   

@@ -123,15 +123,20 @@ public class Filopodyan_ implements Command{
 			}
 			Roi br = target.getRoi();
 			if(br==null){continue;}
+			Rectangle bounds0 = br.getBounds();
 			Roi[] split = new ShapeRoi(br).getRois();
+			//if(split.length==1) return;
 			double maxA = -1d;
 			int maxI = -1;
 			for(int i=0;i<split.length;i++){
-				target.setRoi(split[i]);
-				double area = target.getStatistics().area;
+				double area = split[i].getStatistics().area;
 				if(area>maxA){maxA=area;maxI=i;}
 			}
 			if(maxI>-1){
+				Rectangle bounds1 = split[maxI].getBounds();
+				if(bounds1.x==0&&bounds1.y==0){ //reset ROI location if it was lost - workaround for bug in ShapeRoi.getRois()
+					split[maxI].setLocation(bounds0.x, bounds0.y);
+				}
 				target.setRoi(split[maxI]);
 				IJ.setBackgroundColor(0, 0, 0);
 				IJ.run(target, "Clear Outside", "slice");
@@ -255,8 +260,9 @@ public class Filopodyan_ implements Command{
 				}
 			}
 		}
-		
-		if(!prev)maxAreaOnly(map,tStart,tEnd);
+				
+		//if(!prev)maxAreaOnly(map,tStart,tEnd);
+		maxAreaOnly(map,tStart,tEnd);
 		
 		body = dup.run(map, 1, 1, 1, 1, tStart, tEnd);
 		body.setTitle("body");
@@ -291,6 +297,7 @@ public class Filopodyan_ implements Command{
 			IJ.run(body, "Select None", "");
 			Overlay prevol = new Overlay();
 			IJ.run(body, "Create Selection", "");
+			
 			if(body.getRoi()!=null&&body.getStatistics().mean==0){
 				IJ.run(body, "Make Inverse", "");
 			}
@@ -382,7 +389,13 @@ public class Filopodyan_ implements Command{
 			imp.killRoi();
 			
 			int tablei = t-1;
-			if(tablei>bodyRT.getCounter()){throw new IndexOutOfBoundsException("bodyTable row out of bounds : "+tablei+"/"+bodyRT.getCounter());}
+			if(tablei>bodyRT.getCounter()){
+				//throw new IndexOutOfBoundsException("bodyTable row out of bounds : "+tablei+"/"+bodyRT.getCounter());
+				IJ.error("body table index error at frame "+t);
+				while(tablei>bodyRT.getCounter()){
+					bodyRT.setValue("T", bodyRT.getCounter(), "table filler");
+				}
+			}
 			bodyRT.setValue("T",tablei,t);
 			bodyRT.setValue("X",tablei,(rr.x+(rr.width/2))*pixelW);
 			bodyRT.setValue("Y",tablei,(rr.y+(rr.height/2))*pixelW);
@@ -398,13 +411,17 @@ public class Filopodyan_ implements Command{
 			bodyCentroid.setStrokeColor(Color.MAGENTA);
 			ol.add(bodyCentroid);
 			
+			Rectangle bounds2 = projRoi.getBounds();
 			Roi[] split = projRoi.getRois();
-			
 			imp.setPosition(bgui.measureC,1,t);
 			if(bgui.verbose){bgui.log.print(title, "Processing "+split.length+" objects...");}
 			Tipper tipper = new Tipper();
 			for(int f=0;f<split.length;f++){
 				if(bgui.verbose){bgui.log.print(title, "Object "+f);}
+				
+				Rectangle bounds3 = split[f].getBounds();
+				bodyRoi.setLocation(bounds2.x+bounds3.x, bounds2.y+bounds3.y);
+				
 				if(onEdge(split[f])){continue;}
 				ind++;
 				imp.setRoi(split[f]);
