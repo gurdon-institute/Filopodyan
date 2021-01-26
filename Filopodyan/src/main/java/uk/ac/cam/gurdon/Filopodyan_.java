@@ -125,7 +125,6 @@ public class Filopodyan_ implements Command{
 			if(br==null){continue;}
 			Rectangle bounds0 = br.getBounds();
 			Roi[] split = new ShapeRoi(br).getRois();
-			//if(split.length==1) return;
 			double maxA = -1d;
 			int maxI = -1;
 			for(int i=0;i<split.length;i++){
@@ -411,19 +410,15 @@ public class Filopodyan_ implements Command{
 			bodyCentroid.setStrokeColor(Color.MAGENTA);
 			ol.add(bodyCentroid);
 			
-			Rectangle bounds2 = projRoi.getBounds();
 			Roi[] split = projRoi.getRois();
 			imp.setPosition(bgui.measureC,1,t);
 			if(bgui.verbose){bgui.log.print(title, "Processing "+split.length+" objects...");}
 			Tipper tipper = new Tipper();
 			for(int f=0;f<split.length;f++){
 				if(bgui.verbose){bgui.log.print(title, "Object "+f);}
-				
-				Rectangle bounds3 = split[f].getBounds();
-				bodyRoi.setLocation(bounds2.x+bounds3.x, bounds2.y+bounds3.y);
-				
 				if(onEdge(split[f])){continue;}
 				ind++;
+				
 				imp.setRoi(split[f]);
 				double area = imp.getStatistics().area;
 				double projMean = imp.getStatistics().mean;
@@ -484,8 +479,6 @@ public class Filopodyan_ implements Command{
 		
 		imp.setOverlay(ol);
 		IJ.run(imp, "Select None", "");
-		
-		if(prev)return;
 		
 		setImageVisible(true);
 		
