@@ -20,6 +20,7 @@ import org.scijava.plugin.Plugin;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.OvalRoi;
@@ -33,7 +34,9 @@ import ij.measure.ResultsTable;
 import ij.plugin.Duplicator;
 import ij.plugin.HyperStackConverter;
 import ij.plugin.ImageCalculator;
+import ij.plugin.filter.ThresholdToSelection;
 import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
 /**
@@ -113,35 +116,34 @@ public class Filopodyan_ implements Command{
 		if(unit.matches("[Mm]icrons?")){unit="\u00B5m";}
 	}
 	
-	private void maxAreaOnly(ImagePlus target, int t0, int t1){
+	private void maxAreaOnly(ImagePlus mask, int t0, int t1){
 	try{
+		ImageStack maskStack = mask.getStack();
+		ThresholdToSelection tts = new ThresholdToSelection();
 		for(int t=t0;t<=t1;t++){
-			target.setPosition(1,1,t);
-			IJ.run(target, "Create Selection", "");
-			if(target.getStatistics().mean==0&&target.getRoi()!=null){
-				IJ.run(target, "Make Inverse", "");
-			}
-			Roi br = target.getRoi();
+			ImageProcessor ip = maskStack.getProcessor(mask.getStackIndex(1,1,t));
+			ip.setThreshold(255, 255, ImageProcessor.NO_LUT_UPDATE);
+			Roi br = tts.convert(ip);
 			if(br==null){continue;}
 			Rectangle bounds0 = br.getBounds();
 			Roi[] split = new ShapeRoi(br).getRois();
 			double maxA = -1d;
 			int maxI = -1;
 			for(int i=0;i<split.length;i++){
-				double area = split[i].getStatistics().area;
-				if(area>maxA){maxA=area;maxI=i;}
-			}
-			if(maxI>-1){
-				Rectangle bounds1 = split[maxI].getBounds();
+				Rectangle bounds1 = split[i].getBounds();
 				if(bounds1.x==0&&bounds1.y==0){ //reset ROI location if it was lost - workaround for bug in ShapeRoi.getRois()
-					split[maxI].setLocation(bounds0.x, bounds0.y);
+					split[i].setLocation(bounds0.x, bounds0.y);
+					if(bgui.verbose) bgui.log.print(title, "Resetting ROI location in frame "+t+" : "+bounds0.x+","+bounds0.y);
 				}
-				target.setRoi(split[maxI]);
-				IJ.setBackgroundColor(0, 0, 0);
-				IJ.run(target, "Clear Outside", "slice");
+				double area = split[i].getStatistics().area;
+				if(area>maxA){
+					maxA=area;
+					maxI=i;
+				}
 			}
+			ip.setColor(0);
+			ip.fillOutside(split[maxI]);
 		}
-			IJ.run(target, "Select None", "");
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
@@ -389,7 +391,6 @@ public class Filopodyan_ implements Command{
 			
 			int tablei = t-1;
 			if(tablei>bodyRT.getCounter()){
-				//throw new IndexOutOfBoundsException("bodyTable row out of bounds : "+tablei+"/"+bodyRT.getCounter());
 				IJ.error("body table index error at frame "+t);
 				while(tablei>bodyRT.getCounter()){
 					bodyRT.setValue("T", bodyRT.getCounter(), "table filler");
