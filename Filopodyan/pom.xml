@@ -5,13 +5,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>13.0.0</version>
-		<relativePath />
+		<version>30.0.0</version>
 	</parent>
   
   <groupId>uk.ac.cam.gurdon</groupId>
   <artifactId>Filopodyan</artifactId>
-  <version>1.2.5</version>
+  <version>1.3.1</version>
   <name>Filopodyan</name>
   <description>Filopodyan</description>
   
@@ -33,7 +32,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		</dependency>
 		<dependency>
 			<groupId>net.imagej</groupId>
-			<artifactId>imagej-legacy</artifactId>	<!-- reported as unused by maven-dependency-plugin but is required to avoid ImageJ2 GUI -->
+			<artifactId>imagej-legacy</artifactId>
 		</dependency>
 	</dependencies>
   

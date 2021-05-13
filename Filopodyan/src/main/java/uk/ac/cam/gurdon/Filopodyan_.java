@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -19,6 +20,7 @@ import org.scijava.plugin.Plugin;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.OvalRoi;
@@ -32,7 +34,9 @@ import ij.measure.ResultsTable;
 import ij.plugin.Duplicator;
 import ij.plugin.HyperStackConverter;
 import ij.plugin.ImageCalculator;
+import ij.plugin.filter.ThresholdToSelection;
 import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
 /**
@@ -49,7 +53,7 @@ public class Filopodyan_ implements Command{
 	public ImagePlus imp;
 	private ImagePlus map,body,proj;
 	public FilopodyanGui bgui;
-	public int W,H,C,Z,T,ind,tStart,tEnd,firstTrackIndex;
+	public int W,H,C,Z,T,tStart,tEnd,firstTrackIndex;
 	public String title,sanTitle;
 	private String unit;
 	private double pixelW;
@@ -112,31 +116,34 @@ public class Filopodyan_ implements Command{
 		if(unit.matches("[Mm]icrons?")){unit="\u00B5m";}
 	}
 	
-	private void maxAreaOnly(ImagePlus target, int t0, int t1){
+	private void maxAreaOnly(ImagePlus mask, int t0, int t1){
 	try{
+		ImageStack maskStack = mask.getStack();
+		ThresholdToSelection tts = new ThresholdToSelection();
 		for(int t=t0;t<=t1;t++){
-			target.setPosition(1,1,t);
-			IJ.run(target, "Create Selection", "");
-			if(target.getStatistics().mean==0&&target.getRoi()!=null){
-				IJ.run(target, "Make Inverse", "");
-			}
-			Roi br = target.getRoi();
+			ImageProcessor ip = maskStack.getProcessor(mask.getStackIndex(1,1,t));
+			ip.setThreshold(255, 255, ImageProcessor.NO_LUT_UPDATE);
+			Roi br = tts.convert(ip);
 			if(br==null){continue;}
+			Rectangle bounds0 = br.getBounds();
 			Roi[] split = new ShapeRoi(br).getRois();
 			double maxA = -1d;
 			int maxI = -1;
 			for(int i=0;i<split.length;i++){
-				target.setRoi(split[i]);
-				double area = target.getStatistics().area;
-				if(area>maxA){maxA=area;maxI=i;}
+				Rectangle bounds1 = split[i].getBounds();
+				if(bounds1.x==0&&bounds1.y==0){ //reset ROI location if it was lost - workaround for bug in ShapeRoi.getRois()
+					split[i].setLocation(bounds0.x, bounds0.y);
+					if(bgui.verbose) bgui.log.print(title, "Resetting ROI location in frame "+t+" : "+bounds0.x+","+bounds0.y);
+				}
+				double area = split[i].getStatistics().area;
+				if(area>maxA){
+					maxA=area;
+					maxI=i;
+				}
 			}
-			if(maxI>-1){
-				target.setRoi(split[maxI]);
-				IJ.setBackgroundColor(0, 0, 0);
-				IJ.run(target, "Clear Outside", "slice");
-			}
+			ip.setColor(0);
+			ip.fillOutside(split[maxI]);
 		}
-			IJ.run(target, "Select None", "");
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}
 
@@ -254,8 +261,9 @@ public class Filopodyan_ implements Command{
 				}
 			}
 		}
-		
-		if(!prev)maxAreaOnly(map,tStart,tEnd);
+				
+		//if(!prev)maxAreaOnly(map,tStart,tEnd);
+		maxAreaOnly(map,tStart,tEnd);
 		
 		body = dup.run(map, 1, 1, 1, 1, tStart, tEnd);
 		body.setTitle("body");
@@ -290,6 +298,7 @@ public class Filopodyan_ implements Command{
 			IJ.run(body, "Select None", "");
 			Overlay prevol = new Overlay();
 			IJ.run(body, "Create Selection", "");
+			
 			if(body.getRoi()!=null&&body.getStatistics().mean==0){
 				IJ.run(body, "Make Inverse", "");
 			}
@@ -319,7 +328,7 @@ public class Filopodyan_ implements Command{
 		bodyRT.showRowNumbers(false);
 		bodyRoiArr = new ShapeRoi[tEnd];
 		bodyMean = new double[tEnd];
-		ind = -1;
+		int ind = -1;	//index to use, incremented before adding a new track
 		for(int t=tStart;t<=tEnd;t++){
 			bgui.setLabel("mapping processes T"+t+"<br>"+title);
 			if(bgui.verbose){bgui.log.print(title, "Analysing objects at T"+t);}
@@ -381,7 +390,12 @@ public class Filopodyan_ implements Command{
 			imp.killRoi();
 			
 			int tablei = t-1;
-			if(tablei>bodyRT.getCounter()){throw new IndexOutOfBoundsException("bodyTable row out of bounds : "+tablei+"/"+bodyRT.getCounter());}
+			if(tablei>bodyRT.getCounter()){
+				IJ.error("body table index error at frame "+t);
+				while(tablei>bodyRT.getCounter()){
+					bodyRT.setValue("T", bodyRT.getCounter(), "table filler");
+				}
+			}
 			bodyRT.setValue("T",tablei,t);
 			bodyRT.setValue("X",tablei,(rr.x+(rr.width/2))*pixelW);
 			bodyRT.setValue("Y",tablei,(rr.y+(rr.height/2))*pixelW);
@@ -398,7 +412,6 @@ public class Filopodyan_ implements Command{
 			ol.add(bodyCentroid);
 			
 			Roi[] split = projRoi.getRois();
-			
 			imp.setPosition(bgui.measureC,1,t);
 			if(bgui.verbose){bgui.log.print(title, "Processing "+split.length+" objects...");}
 			Tipper tipper = new Tipper();
@@ -406,6 +419,7 @@ public class Filopodyan_ implements Command{
 				if(bgui.verbose){bgui.log.print(title, "Object "+f);}
 				if(onEdge(split[f])){continue;}
 				ind++;
+				
 				imp.setRoi(split[f]);
 				double area = imp.getStatistics().area;
 				double projMean = imp.getStatistics().mean;
@@ -467,13 +481,11 @@ public class Filopodyan_ implements Command{
 		imp.setOverlay(ol);
 		IJ.run(imp, "Select None", "");
 		
-		if(prev)return;
-		
 		setImageVisible(true);
 		
 		calculateDCMs();
 		
-		FiloFilter cf = new FiloFilter(filo,ind,this);
+		FiloFilter cf = new FiloFilter(filo, this);
 		if(batch){
 			cf.batchFilter((BatchFilopodyan)bgui);
 		}
@@ -488,7 +500,14 @@ public class Filopodyan_ implements Command{
 	
 	private void calculateDCMs(){
 	try{
-		for(int i=0;i<ind;i++){
+		//get unique track indices
+		HashSet<Integer> trackIndices = new HashSet<Integer>();
+		for(ArrayList<FiloPod> tlist:filo){
+			for(FiloPod fp:tlist){
+				trackIndices.add( fp.getIndex() );
+			}
+		}
+		for(int i : trackIndices){
 			Point2d tipLast = new Point2d();
 			Point2d baseLast = new Point2d();
 			int lastT = -100;
@@ -639,6 +658,8 @@ public class Filopodyan_ implements Command{
 					if(bgui.boundaryAnalysis){
 						new BoundaryAnalyser(bgui,imp).run(filo,bodyRoiArr);
 					}
+					
+					
 
 					//doOverlay();
 
@@ -654,7 +675,16 @@ public class Filopodyan_ implements Command{
 						coordRT.setValue("dT",t,bgui.backFrames+t);
 					}
 
-					for(int i=0;i<ind;i++){
+					
+					//get unique track indices
+					HashSet<Integer> trackIndices = new HashSet<Integer>();
+					for(ArrayList<FiloPod> tlist:filo){
+						for(FiloPod fp:tlist){
+							trackIndices.add( fp.getIndex() );
+						}
+					}
+
+					for(int i : trackIndices){
 						bgui.setLabel("analysing track "+i+"<br>"+title);
 						if(bgui.verbose){bgui.log.print(title, "Measuring track "+i);}
 						double[] baseMeanArr = new double[T];
@@ -832,7 +862,6 @@ public class Filopodyan_ implements Command{
 								}
 							}
 						}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
-						//doOverlay();
 					}
 					doOverlay();
 					bgui.setLabel("outputting results<br>"+title);
@@ -895,8 +924,14 @@ public class Filopodyan_ implements Command{
 						coordRT.show(sanTitle+" Coordinates");
 					}
 
-					if(bgui.bodyTable){bodyRT.show(sanTitle+" Bodies");}
+					if(bgui.bodyTable){
+						bodyRT.show(sanTitle+" Bodies");
+					}
 
+					if(bgui.processProfile){
+						new ProcessProfiler(bgui,imp,ol).run(filo);
+					}
+					
 					imp.setOverlay(ol);
 					imp.setC(bgui.mapC);
 					if(!batch){bgui.workFrame.dispose();}
@@ -1011,10 +1046,16 @@ public class Filopodyan_ implements Command{
 		
 		ImageJ.main(arg);
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
-		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
-		ImagePlus img = new ImagePlus("E:\\Jenny Gallop\\fly_figure\\fascin_analysis\\project_areas_time\\68,176_MAX_2016-1207-GFPfascin enGal4 UAS-cd8mCherry.lif - Series032 - 1E10.tif");
-		final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 40);
-		image.setDisplayMode(IJ.COLOR);
+
+		//ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
+		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\GCtest.tif");
+		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\NeonENA_GC15-1.tif");
+		
+		ImagePlus img = new ImagePlus("E:\\Vasja\\processing_testers\\d1_NeonENA_GC2-_RedDenoised_Renamed-tip_test.tif");
+		
+		final ImagePlus image = HyperStackConverter.toHyperStack(img, img.getNChannels(), 1, img.getNFrames());
+		image.setDisplayMode(IJ.GRAYSCALE);
+		
 		image.show();
 	    
 		new Filopodyan_().run();

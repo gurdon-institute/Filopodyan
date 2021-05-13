@@ -62,7 +62,8 @@ import ij.Prefs;
 public class FilopodyanGui extends JDialog implements ActionListener, ChangeListener{
 private static final long serialVersionUID = 9710347002937l;
 public JCheckBox boundaryTick, tipPlotTick, filoTableTick, coordTableTick, bodyTableTick, kymographsTick,
-				 ccfTick, basePlotTick, timeTick, verboseTick, adaptiveTick, fitTick, joinTick, showBackgroundTick;
+				 ccfTick, basePlotTick, timeTick, verboseTick, adaptiveTick, fitTick, joinTick, showBackgroundTick,
+				 processProfileTick;
 public JToggleButton advTick;
 public JComboBox<String> mapCombo, measureCombo, thresholdCombo;
 public JTextField itField, sigmaField, weightField, dWField, oWField, backField;
@@ -135,6 +136,7 @@ public boolean fit = Prefs.get("Filopodyan.fit", false);
 public boolean verbose = Prefs.get("Filopodyan.verbose", false);
 public boolean join = Prefs.get("Filopodyan.join", false);
 public boolean showBackground = Prefs.get("Filopodyan.showBackground", false);
+public boolean processProfile = Prefs.get("Filopodyan.processProfile", false);
 public boolean advMode = Prefs.get("Filopodyan.advMode", false);
 public int eds = (int)Prefs.get("Filopodyan.eds", 8);
 public int backFrames = (int)Prefs.get("Filopodyan.backFrames", 3);
@@ -292,6 +294,11 @@ private JLabel workLabel;
 		bodyTableTick = new JCheckBox("Body Table",bodyTable);
 		bodyTableTick.addChangeListener(this);
 		add(makePanel(BASIC, bodyTableTick));
+		
+		processProfileTick = new JCheckBox("Process Profile Graphs",processProfile);
+		processProfileTick.addChangeListener(this);
+		add(makePanel(ADVANCED, processProfileTick));
+		
 		boundaryTick = new JCheckBox("Boundary Visualisation",boundaryAnalysis);
 		boundaryTick.addChangeListener(this);
 		kymographsTick = new JCheckBox("Kymographs",kymographs);
@@ -338,6 +345,7 @@ private JLabel workLabel;
 		Prefs.set("Filopodyan.backFrames",backFrames);
 		Prefs.set("Filopodyan.sigma",sigma);
 		Prefs.set("Filopodyan.boundaryAnalysis",boundaryAnalysis);
+		Prefs.set("Filopodyan.processProfile", processProfile);
 		Prefs.set("Filopodyan.filoTable",filoTable);
 		Prefs.set("Filopodyan.coordTable",coordTable);
 		Prefs.set("Filopodyan.bodyTable",bodyTable);
@@ -386,6 +394,7 @@ private JLabel workLabel;
 				kymographs = boundaryAnalysis&&kymographsTick.isSelected();
 				ccf = boundaryAnalysis&&kymographs&&ccfTick.isSelected();
 			}
+			processProfile = processProfileTick.isSelected();
 			time = timeTick.isSelected();
 			verbose = verboseTick.isSelected();
 			adaptive = adaptiveTick.isSelected();
@@ -400,6 +409,7 @@ private JLabel workLabel;
 				join = false;
 				showBackground = false;
 				boundaryAnalysis = false;
+				processProfile = false;
 			}
 			
 	}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
