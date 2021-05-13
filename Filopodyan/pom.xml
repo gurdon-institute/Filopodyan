@@ -6,11 +6,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
 		<version>30.0.0</version>
+<<<<<<< HEAD
+=======
+		<relativePath />
+>>>>>>> branch 'master' of https://github.com/gurdon-institute/Filopodyan.git
 	</parent>
   
   <groupId>uk.ac.cam.gurdon</groupId>
   <artifactId>Filopodyan</artifactId>
+<<<<<<< HEAD
   <version>1.3.1</version>
+=======
+  <version>1.2.8</version>
+>>>>>>> branch 'master' of https://github.com/gurdon-institute/Filopodyan.git
   <name>Filopodyan</name>
   <description>Filopodyan</description>
   
