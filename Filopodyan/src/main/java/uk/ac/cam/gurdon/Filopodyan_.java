@@ -1046,8 +1046,6 @@ public class Filopodyan_ implements Command{
 		
 		ImageJ.main(arg);
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
-<<<<<<< HEAD
-
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\GCtest.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\NeonENA_GC15-1.tif");
@@ -1056,15 +1054,6 @@ public class Filopodyan_ implements Command{
 		
 		final ImagePlus image = HyperStackConverter.toHyperStack(img, img.getNChannels(), 1, img.getNFrames());
 		image.setDisplayMode(IJ.GRAYSCALE);
-		
-=======
-		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 8);
-		
-		//final ImagePlus image = HyperStackConverter.toHyperStack(img, 2, 1, 40);
-		//image.setDisplayMode(IJ.COLOR);
-		ImagePlus image = new ImagePlus("C:\\Users\\USER\\work\\data\\growth-cone-test-file.tif");
->>>>>>> branch 'master' of https://github.com/gurdon-institute/Filopodyan.git
-		image.show();
 	    
 		new Filopodyan_().run();
 	}
