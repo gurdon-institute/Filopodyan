@@ -404,6 +404,8 @@ public class Filopodyan_ implements Command{
 			bodyRT.setValue("StdDev",tablei,bodyStats.stdDev);
 			bodyRT.setValue("Frame Background",tablei,frameBackgroundStats.mean);
 			bodyRT.setValue("Boundary Background",tablei,boundaryBackgroundStats.mean);
+			bodyRT.setValue("Body Area",tablei,bodyStats.area);
+			bodyRT.setValue("Body Perimeter",tablei,bodyRoi.getLength());
 
 			PointRoi bodyCentroid = new PointRoi(rr.x+(rr.width/2),rr.y+(rr.height/2));
 			
@@ -1046,15 +1048,17 @@ public class Filopodyan_ implements Command{
 		
 		ImageJ.main(arg);
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
-		//ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
+		ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\GCtest.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\NeonENA_GC15-1.tif");
 		
-		ImagePlus img = new ImagePlus("E:\\Vasja\\processing_testers\\d1_NeonENA_GC2-_RedDenoised_Renamed-tip_test.tif");
+		//ImagePlus img = new ImagePlus("E:\\Vasja\\processing_testers\\d1_NeonENA_GC2-_RedDenoised_Renamed-tip_test.tif");
 		
 		final ImagePlus image = HyperStackConverter.toHyperStack(img, img.getNChannels(), 1, img.getNFrames());
 		image.setDisplayMode(IJ.GRAYSCALE);
 	    
+		image.show();
+		
 		new Filopodyan_().run();
 	}
 	
