@@ -63,7 +63,7 @@ public class FilopodyanGui extends JDialog implements ActionListener, ChangeList
 private static final long serialVersionUID = 9710347002937l;
 public JCheckBox boundaryTick, tipPlotTick, filoTableTick, coordTableTick, bodyTableTick, kymographsTick,
 				 ccfTick, basePlotTick, timeTick, verboseTick, adaptiveTick, fitTick, joinTick, showBackgroundTick,
-				 processProfileTick;
+				 processProfileTick, processLineTick;
 public JToggleButton advTick;
 public JComboBox<String> mapCombo, measureCombo, thresholdCombo;
 public JTextField itField, sigmaField, weightField, dWField, oWField, backField;
@@ -137,6 +137,7 @@ public boolean verbose = Prefs.get("Filopodyan.verbose", false);
 public boolean join = Prefs.get("Filopodyan.join", false);
 public boolean showBackground = Prefs.get("Filopodyan.showBackground", false);
 public boolean processProfile = Prefs.get("Filopodyan.processProfile", false);
+public boolean processLines = Prefs.get("Filopodyan.processLines", false);
 public boolean advMode = Prefs.get("Filopodyan.advMode", false);
 public int eds = (int)Prefs.get("Filopodyan.eds", 8);
 public int backFrames = (int)Prefs.get("Filopodyan.backFrames", 3);
@@ -299,6 +300,11 @@ private JLabel workLabel;
 		processProfileTick.addChangeListener(this);
 		add(makePanel(ADVANCED, processProfileTick));
 		
+		
+		processLineTick = new JCheckBox("Process Lines",processLines);
+		processLineTick.addChangeListener(this);
+		add(makePanel(ADVANCED, processLineTick));
+		
 		boundaryTick = new JCheckBox("Boundary Visualisation",boundaryAnalysis);
 		boundaryTick.addChangeListener(this);
 		kymographsTick = new JCheckBox("Kymographs",kymographs);
@@ -346,6 +352,7 @@ private JLabel workLabel;
 		Prefs.set("Filopodyan.sigma",sigma);
 		Prefs.set("Filopodyan.boundaryAnalysis",boundaryAnalysis);
 		Prefs.set("Filopodyan.processProfile", processProfile);
+		Prefs.set("Filopodyan.processLines", processLines);
 		Prefs.set("Filopodyan.filoTable",filoTable);
 		Prefs.set("Filopodyan.coordTable",coordTable);
 		Prefs.set("Filopodyan.bodyTable",bodyTable);
@@ -395,6 +402,7 @@ private JLabel workLabel;
 				ccf = boundaryAnalysis&&kymographs&&ccfTick.isSelected();
 			}
 			processProfile = processProfileTick.isSelected();
+			processLines = processLineTick.isSelected();
 			time = timeTick.isSelected();
 			verbose = verboseTick.isSelected();
 			adaptive = adaptiveTick.isSelected();

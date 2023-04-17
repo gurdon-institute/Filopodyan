@@ -14,9 +14,11 @@ import ij.gui.Overlay;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.measure.Calibration;
+import ij.measure.ResultsTable;
 import ij.plugin.Straightener;
 import ij.plugin.filter.EDM;
 import ij.plugin.filter.MaximumFinder;
+import ij.plugin.frame.RoiManager;
 import ij.process.Blitter;
 import ij.process.ByteProcessor;
 import ij.process.FloatPolygon;
@@ -92,8 +94,10 @@ public class ProcessProfiler {
 			int minX = Integer.MAX_VALUE;
 			int maxX = Integer.MIN_VALUE;
 			HashMap<Integer, FloatProcessor> profileGraphs = new HashMap<Integer, FloatProcessor>();
+			HashMap<Integer, HashMap<Integer, PolygonRoi>> profileLines = new HashMap<Integer, HashMap<Integer, PolygonRoi>>();
 			for(Integer tracki:tracks.keySet()){
 				HashMap<Integer, ImageProcessor> trackProfiles = new HashMap<Integer, ImageProcessor>();
+				HashMap<Integer, PolygonRoi> trackLines = new HashMap<Integer, PolygonRoi>();
 				int moveSum = 0;	//total DCBM to apply offset for profile registration
 				//System.out.println("track "+tracki);
 				for(FiloPod fp:tracks.get(tracki)){
@@ -128,6 +132,7 @@ public class ProcessProfiler {
 					straightOffset.copyBits(straight, extraspace+moveSum,0, Blitter.COPY);	//offset according to base movement
 
 					trackProfiles.put(fp.getT(), straightOffset);
+					trackLines.put(fp.getT(), line);
 					
 					if(ol!=null){	//show profile lines in the Overlay if one was passed to constructor
 						ol.add(line);
@@ -143,25 +148,45 @@ public class ProcessProfiler {
 					}
 				}
 				
-				profileGraphs.put(tracki, kymoProfile(trackProfiles) );
+				if(bgui.processProfile){
+					profileGraphs.put(tracki, kymoProfile(trackProfiles) );
+				}
+				if(bgui.processLines){
+					profileLines.put(tracki, trackLines);
+				}
 				
 			}
 			
-			int cropW = maxX-minX+2;
-			for(int tracki:profileGraphs.keySet()){
-				FloatProcessor graph = profileGraphs.get(tracki);
-				FloatProcessor cropped = new FloatProcessor(cropW,imp.getNFrames());
-				cropped.copyBits(graph, -minX+1,0, Blitter.COPY);
-				profileGraphs.put(tracki, cropped);
+			if(bgui.processProfile){
+				int cropW = maxX-minX+2;
+				for(int tracki:profileGraphs.keySet()){
+					FloatProcessor graph = profileGraphs.get(tracki);
+					FloatProcessor cropped = new FloatProcessor(cropW,imp.getNFrames());
+					cropped.copyBits(graph, -minX+1,0, Blitter.COPY);
+					profileGraphs.put(tracki, cropped);
+				}
+				
+				Calibration distTimeCal = new Calibration();
+				distTimeCal.pixelWidth = cal.pixelWidth;
+				distTimeCal.pixelHeight = cal.frameInterval;
+				distTimeCal.setUnit(cal.getUnit());
+				distTimeCal.setTimeUnit(cal.getTimeUnit());
+				
+				new ProcessGraphWindow(profileGraphs, distTimeCal).display();
 			}
 			
-			Calibration distTimeCal = new Calibration();
-			distTimeCal.pixelWidth = cal.pixelWidth;
-			distTimeCal.pixelHeight = cal.frameInterval;
-			distTimeCal.setUnit(cal.getUnit());
-			distTimeCal.setTimeUnit(cal.getTimeUnit());
-			
-			new ProcessGraphWindow(profileGraphs, distTimeCal).display();
+			if(bgui.processLines){
+				RoiManager rm = new RoiManager();
+				for(Integer tracki:tracks.keySet()){
+					for(FiloPod fp:tracks.get(tracki)){
+						int frame = fp.getT();
+						PolygonRoi lineRoi = profileLines.get(tracki).get(frame);
+						lineRoi.setName("Track "+tracki+" T"+frame);
+						rm.addRoi(lineRoi);
+					}
+				}
+				rm.setVisible(true);
+			}
 			
 		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
 	}

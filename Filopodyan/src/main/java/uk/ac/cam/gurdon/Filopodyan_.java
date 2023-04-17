@@ -930,7 +930,7 @@ public class Filopodyan_ implements Command{
 						bodyRT.show(sanTitle+" Bodies");
 					}
 
-					if(bgui.processProfile){
+					if(bgui.processProfile||bgui.processLines){
 						new ProcessProfiler(bgui,imp,ol).run(filo);
 					}
 					
