@@ -214,16 +214,11 @@ public class Filopodyan_ implements Command{
 			IJ.run(imp, "Select None", "");
 		}
 		
-		if(bgui.adaptive){
-			bgui.setLabel("adaptive thresholding<br>"+title);
-			if(bgui.verbose){bgui.log.print(title, "Running adaptive thresholding");}
-			map = filoProcessor.process(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
-		}
-		else{
-			bgui.setLabel("Laplacian of Gaussian<br>"+title);
-			if(bgui.verbose){bgui.log.print(title, "Running Laplacian of Gaussian");}
-			map = filoProcessor.process(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
-		} 
+
+		bgui.setLabel("processing <br>"+title);
+		if(bgui.verbose){bgui.log.print(title, "Segmenting using "+filoProcessor);}
+		map = filoProcessor.process(imp,bgui.mapC,tStart, tEnd, bgui.sigma, bgui.threshold, bgui.verbose);
+
 		
 		if(userRoi!=null){
 			if(bgui.verbose){IJ.log("Analysing user-defined ROI");}
@@ -1048,11 +1043,14 @@ public class Filopodyan_ implements Command{
 		
 		ImageJ.main(arg);
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
-		ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
+		//ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\GCtest.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\NeonENA_GC15-1.tif");
 		
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\processing_testers\\d1_NeonENA_GC2-_RedDenoised_Renamed-tip_test.tif");
+		
+		ImagePlus img = new ImagePlus("E:\\Alexander_Rohrbach\\100frames_duplicate_Figure3_Cut-2.tif");
+		//ImagePlus img = new ImagePlus("E:\\Alexander_Rohrbach\\100_frames_duplicate_Figure3_Cut.tif - deconvolution-1p-Median-1.tif");
 		
 		final ImagePlus image = HyperStackConverter.toHyperStack(img, img.getNChannels(), 1, img.getNFrames());
 		image.setDisplayMode(IJ.GRAYSCALE);

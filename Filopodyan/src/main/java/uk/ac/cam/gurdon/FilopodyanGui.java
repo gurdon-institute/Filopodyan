@@ -62,7 +62,7 @@ import ij.Prefs;
 public class FilopodyanGui extends JDialog implements ActionListener, ChangeListener{
 private static final long serialVersionUID = 9710347002937l;
 public JCheckBox boundaryTick, tipPlotTick, filoTableTick, coordTableTick, bodyTableTick, kymographsTick,
-				 ccfTick, basePlotTick, timeTick, verboseTick, adaptiveTick, fitTick, joinTick, showBackgroundTick,
+				 ccfTick, basePlotTick, timeTick, verboseTick, adaptiveTick, ssTick, fitTick, joinTick, showBackgroundTick,
 				 processProfileTick, processLineTick;
 public JToggleButton advTick;
 public JComboBox<String> mapCombo, measureCombo, thresholdCombo;
@@ -132,6 +132,9 @@ public boolean ccf = Prefs.get("Filopodyan.ccf", false);
 public boolean basePlot = Prefs.get("Filopodyan.basePlot", false);
 public boolean time = Prefs.get("Filopodyan.time", false);
 public boolean adaptive = Prefs.get("Filopodyan.adaptive", false);
+
+public boolean ss = Prefs.get("Filopodyan.ss", false);
+
 public boolean fit = Prefs.get("Filopodyan.fit", false);
 public boolean verbose = Prefs.get("Filopodyan.verbose", false);
 public boolean join = Prefs.get("Filopodyan.join", false);
@@ -270,8 +273,26 @@ private JLabel workLabel;
 		thresholdCombo = new JComboBox<String>(methods);
 		thresholdCombo.setSelectedItem(threshold);
 		add( makePanel(BASIC, new JLabel("Threshold: ",JLabel.RIGHT), thresholdCombo) );
+		
+		ChangeListener tickListen = new ChangeListener(){
+			public void stateChanged(ChangeEvent ce){
+				Object src = ce.getSource();
+				if(src==adaptiveTick&&adaptiveTick.isSelected()){
+					ssTick.setSelected(false);
+				}
+				else if(src==ssTick&&ssTick.isSelected()){
+					adaptiveTick.setSelected(false);
+				}
+			}
+		};
+		
 		adaptiveTick = new JCheckBox("",adaptive);
+		adaptiveTick.addChangeListener(tickListen);
 		add(makePanel(ADVANCED, new JLabel("Adaptive Thresholding", JLabel.RIGHT), adaptiveTick));
+		ssTick = new JCheckBox("",ss);
+		ssTick.addChangeListener(tickListen);
+		add(makePanel(ADVANCED, new JLabel("Scale Space", JLabel.RIGHT), ssTick));
+		
 		fitTick = new JCheckBox("",fit);
 		fitTick.addChangeListener(this);
 		JPanel fitPanel = makePanel(ADVANCED, new JLabel("Fit tip to measure C", JLabel.RIGHT), fitTick);
@@ -360,6 +381,7 @@ private JLabel workLabel;
 		Prefs.set("Filopodyan.ccf",ccf);
 		Prefs.set("Filopodyan.time",time);
 		Prefs.set("Filopodyan.adaptive",adaptive);
+		Prefs.set("Filopodyan.ss",ss);
 		Prefs.set("Filopodyan.fit",fit);
 		Prefs.set("Filopodyan.verbose",verbose);
 		Prefs.set("Filopodyan.join",join);
@@ -406,6 +428,7 @@ private JLabel workLabel;
 			time = timeTick.isSelected();
 			verbose = verboseTick.isSelected();
 			adaptive = adaptiveTick.isSelected();
+			ss = ssTick.isSelected();
 			join = joinTick.isSelected();
 			showBackground = showBackgroundTick.isSelected();
 			
@@ -640,6 +663,9 @@ private JLabel workLabel;
 					if(adaptive){
 						fp = new ALTProcessor();
 					}
+					else if(ss){
+						fp = new SSProcessor();
+					}
 					else{
 						fp = new LoGProcessor();
 					}
@@ -667,6 +693,9 @@ private JLabel workLabel;
 			FilopodyanProcessor fp = null;
 			if(adaptive){
 				fp = new ALTProcessor();
+			}
+			else if(ss){
+				fp = new SSProcessor();
 			}
 			else{
 				fp = new LoGProcessor();
