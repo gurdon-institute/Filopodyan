@@ -62,7 +62,7 @@ private Timer timer;
 		this.eds = (int)Prefs.get("Filopodyan.eds",8);
 		this.backFrames = (int)Prefs.get("Filopodyan.backFrames",3);
 		this.mapC = (int)Math.round(Prefs.get("Filopodyan.mapC",1));
-		this.measureC = (int)Math.round(Prefs.get("Filopodyan.measureC",2));
+		this.targetC = (int)Math.round(Prefs.get("Filopodyan.measureC",2));
 		this.sigma = Prefs.get("Filopodyan.sigma",4d);
 		this.threshold = Prefs.get("Filopodyan.threshold","Triangle");
 		this.C = 2;

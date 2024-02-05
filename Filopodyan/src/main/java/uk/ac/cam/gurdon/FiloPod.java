@@ -48,21 +48,21 @@ public interface FiloPod {
 	 */
 	public double getArea();
 	
-	/** @return the base mean intensity
+	/** @return the base mean intensity for channel c
 	 */
-	public double getBaseMean();
+	public double getBaseMean(int c);
 	
-	/** @return the process mean intensity
+	/** @return the process mean intensity for channel c
 	 */
-	public double getProjMean();
+	public double getProjMean(int c);
 	
-	/** @return the tip mean intensity
+	/** @return the tip mean intensity for channel c
 	 */
-	public double getTipMean();
+	public double getTipMean(int c);
 	
-	/** @return the tip thresholded mean intensity
+	/** @return the tip thresholded mean intensity for channel c
 	 */
-	public double getTipThMean();
+	public double getTipThMean(int c);
 	
 	/** @return the join cost assigned to this object
 	 */

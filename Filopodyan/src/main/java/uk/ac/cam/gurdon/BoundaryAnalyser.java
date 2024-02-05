@@ -77,7 +77,7 @@ private int kymoWidth = 1000;
 					position.add(i);
 					
 					//adaptive signal
-					imp.setPosition(bgui.measureC,1,t);
+					imp.setPosition(bgui.targetC,1,t);
 					Roi inner = new ShapeRoi(boundary).and(new ShapeRoi(new OvalRoi(poly.xpoints[i]-4.5d,poly.ypoints[i]-4.5d,9d,9d)));
 					imp.setRoi(inner);
 					Double mean = imp.getStatistics().mean;
@@ -87,7 +87,7 @@ private int kymoWidth = 1000;
 					signalMax = Math.max(signalMax,sf);
 					signalMin = Math.min(signalMin,sf);
 					Roi innerMarker = new Roi(poly.xpoints[i]-0.5d,poly.ypoints[i]-0.5d,1d,1d);
-					innerMarker.setPosition(bgui.measureC,1,t);
+					innerMarker.setPosition(bgui.targetC,1,t);
 					signalOl.add(innerMarker);
 					
 					//adaptive velocity
@@ -101,7 +101,7 @@ private int kymoWidth = 1000;
 					IJ.run(imp, "Select None", "");
 					double gradient = ((pixb1-pix0)/2) + ((pix0-pixf1)/2);
 					Roi marker = new Roi(poly.xpoints[i]-0.5d,poly.ypoints[i]-0.5d,1d,1d);
-					marker.setPosition(bgui.measureC,1,t);
+					marker.setPosition(bgui.targetC,1,t);
 					float vf = new Float(gradient);
 					velocity.add(vf);
 					meanV[t] += vf;
@@ -146,7 +146,7 @@ private int kymoWidth = 1000;
 		IJ.run(map2, "Clear", "stack");
 		IJ.run(map2, "Select None", "");
 		map2.setOverlay(signalOl);
-		map2.setTitle("Boundary C"+bgui.measureC+" signal : "+title);
+		map2.setTitle("Boundary C"+bgui.targetC+" signal : "+title);
 		map2.changes = false;
 		map2.show();
 	
@@ -162,7 +162,7 @@ private int kymoWidth = 1000;
 			fpS.setf(normPos,thisTime-1,signal.get(i));
 			fpV.setf(normPos,thisTime-1,velocity.get(i)-0.5f);	//set 0 as no movement, so -ve is retraction and +ve is extension	
 		}
-		ImagePlus kymoS = new ImagePlus(title+"C"+bgui.measureC+" Boundary Signal Kymograph",fpS);
+		ImagePlus kymoS = new ImagePlus(title+"C"+bgui.targetC+" Boundary Signal Kymograph",fpS);
 		kymoS.show();
 		ImagePlus kymoV = new ImagePlus(title+"C"+bgui.mapC+" Boundary Velocity Kymograph",fpV);
 		kymoV.show();

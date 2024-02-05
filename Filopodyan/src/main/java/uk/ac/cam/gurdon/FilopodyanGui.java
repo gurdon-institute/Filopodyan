@@ -145,7 +145,7 @@ public boolean advMode = Prefs.get("Filopodyan.advMode", false);
 public int eds = (int)Prefs.get("Filopodyan.eds", 8);
 public int backFrames = (int)Prefs.get("Filopodyan.backFrames", 3);
 public int mapC = (int)Math.round(Prefs.get("Filopodyan.mapC", 1));
-public int measureC = (int)Math.round(Prefs.get("Filopodyan.measureC", 2));
+public int targetC = (int)Math.round(Prefs.get("Filopodyan.targetC", 2));
 public double sigma = Prefs.get("Filopodyan.sigma", 3d);
 public double weight = Prefs.get("Filopodyan.weight", 0.8d);
 public String threshold = Prefs.get("Filopodyan.threshold", "Triangle");
@@ -264,9 +264,9 @@ private JLabel workLabel;
 		mapCombo.setSelectedItem(""+mapC);
 		mapPanel.add(mapCombo);
 		JPanel measurePanel = new JPanel();
-		measurePanel.add(new JLabel("Measure C"));
+		measurePanel.add(new JLabel("Target C"));
 		measureCombo = new JComboBox<String>(chans);
-		measureCombo.setSelectedItem(""+measureC);
+		measureCombo.setSelectedItem(""+targetC);
 		measurePanel.add(measureCombo);
 		add(makePanel(BASIC, mapPanel, measurePanel, advPan));
 		
@@ -295,7 +295,7 @@ private JLabel workLabel;
 		
 		fitTick = new JCheckBox("",fit);
 		fitTick.addChangeListener(this);
-		JPanel fitPanel = makePanel(ADVANCED, new JLabel("Fit tip to measure C", JLabel.RIGHT), fitTick);
+		JPanel fitPanel = makePanel(ADVANCED, new JLabel("Fit tip to target C", JLabel.RIGHT), fitTick);
 		add(fitPanel);
 		joinTick = new JCheckBox("",join);
 		JPanel joinPanel = makePanel(ADVANCED, new JLabel("Join fragments",JLabel.RIGHT), joinTick);
@@ -366,7 +366,7 @@ private JLabel workLabel;
 	public void setPrefs(){
 	try{
 		Prefs.set("Filopodyan.mapC",mapC);
-		Prefs.set("Filopodyan.measureC",measureC);
+		Prefs.set("Filopodyan.targetC",targetC);
 		Prefs.set("Filopodyan.threshold",threshold);
 		Prefs.set("Filopodyan.eds",eds);
 		Prefs.set("Filopodyan.backFrames",backFrames);
@@ -398,7 +398,7 @@ private JLabel workLabel;
 	try{
 			threshold = (String)thresholdCombo.getSelectedItem();
 			mapC = Integer.valueOf((String)mapCombo.getSelectedItem());
-			measureC = Integer.valueOf((String)measureCombo.getSelectedItem());
+			targetC = Integer.valueOf((String)measureCombo.getSelectedItem());
 			try{
 				eds = Integer.parseInt(itField.getText());
 			}catch(NumberFormatException nfe){IJ.error(itField.getText()+" is not an integer.");return false;}
@@ -590,7 +590,7 @@ private JLabel workLabel;
 		setPrefs();
 		String str ="Filopodyan settings "+(new Date().toString())+"\n"+
 					"Map C: "+mapC+"\n"+
-					"Measure C: "+measureC+"\n"+
+					"Measure C: "+targetC+"\n"+
 					"Threshold: "+threshold+"\n"+
 					"Adaptive thresholding: "+adaptive+"\n"+
 					"Fit tip to measure C: "+fit+"\n"+

@@ -109,7 +109,7 @@ public class ProcessProfiler {
 			        	line.setPosition(fp.getT());
 			        }
 					
-					ImageProcessor ip = imp.getStack().getProcessor( imp.getStackIndex(bgui.measureC, 1, fp.getT()) );
+					ImageProcessor ip = imp.getStack().getProcessor( imp.getStackIndex(bgui.targetC, 1, fp.getT()) );
 					ImagePlus wrapper = new ImagePlus("wrapper",ip);
 					wrapper.setRoi(line);
 					ImageProcessor straight = straightener.straighten(wrapper, line, bgui.eds); //line width from ed iteration count

@@ -1,6 +1,7 @@
 package uk.ac.cam.gurdon;
 import java.awt.Rectangle;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import ij.IJ;
 import ij.gui.Roi;
@@ -13,33 +14,9 @@ public class Filopart implements FiloPod{
 	Roi roi,base,tip;
 	int T;
 	int index;
-	double pixW,area,baseMean,projMean,tipMean,tipThMean,joinCost,dctm,dcbm,sigma,length;
+	double pixW,area,joinCost,dctm,dcbm,sigma,length;
+	double[] baseMean, projMean,tipMean,tipThMean;
 	Point2d baseCoord, tipCoord;
-	
-	/** Used for testing, the non-static <code>Filopart</code> constuctor should be used instead.
-	 * 
-	 * @param r	The process <code>Roi</code>
-	 * @param base	The process base <code>Roi</code>
-	 * @param tip	The process tip <code>Roi</code>
-	 * @param pixW	The calibrated pixel width
-	 * @param t	The timepoint that this process exists at
-	 * @param i	The index of this process
-	 * @param a	The process area in units^2
-	 * @param meanB The base mean intensity
-	 * @param meanP The process mean intensity
-	 * @param meanT The tip mean intensity
-	 * @param meanThT The thresholded mean intensity
-	 * @param sigma	The Gaussian sigma value used to detect this process
-	 * @return the new <code>Filopart</code>
-	 */
-	@Deprecated
-	public static Filopart create(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
-		Filopart part = null;
-		try{
-			part = new Filopart(r, base, tip, pixW, t, i, a, meanB, meanP, meanT, meanThT, sigma);
-		}catch(Throwable bad){IJ.log(bad.toString()+"\n~~~~~\n"+Arrays.toString(bad.getStackTrace()).replace(",","\n"));}
-		return part;
-	}
 	
 	/** Constuctor taking <code>Roi</code>s and values to be stored
 	 * 
@@ -56,7 +33,7 @@ public class Filopart implements FiloPod{
 	 * @param meanThT The thresholded mean intensity
 	 * @param sigma	The Gaussian sigma value used to detect this process 
 	 */
-	public Filopart(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double meanB, double meanP, double meanT, double meanThT, double sigma){
+	public Filopart(Roi r, Roi base, Roi tip, double pixW, int t, int i, double a, double[] meanB, double[] meanP, double[] meanT, double[] meanThT, double sigma){
 		try{
 			this.roi = r;
 			this.pixW = pixW;
@@ -183,23 +160,23 @@ public class Filopart implements FiloPod{
 	}
 
 	@Override
-	public double getBaseMean() {
-		return baseMean;
+	public double getBaseMean(int c) {
+		return baseMean[c];
 	}
 
 	@Override
-	public double getProjMean() {
-		return projMean;
+	public double getProjMean(int c) {
+		return projMean[c];
 	}
 
 	@Override
-	public double getTipMean() {
-		return tipMean;
+	public double getTipMean(int c) {
+		return tipMean[c];
 	}
 
 	@Override
-	public double getTipThMean() {
-		return tipThMean;
+	public double getTipThMean(int c) {
+		return tipThMean[c];
 	}
 
 	@Override

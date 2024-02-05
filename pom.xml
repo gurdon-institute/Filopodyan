@@ -11,7 +11,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   
   <groupId>uk.ac.cam.gurdon</groupId>
   <artifactId>Filopodyan</artifactId>
-  <version>1.5.0</version>
+  <version>1.6.0</version>
   <name>Filopodyan</name>
   <description>Filopodyan</description>
   

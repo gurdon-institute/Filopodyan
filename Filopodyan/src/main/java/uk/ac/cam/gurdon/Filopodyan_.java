@@ -66,7 +66,7 @@ public class Filopodyan_ implements Command{
 	private Roi[] frameBackgroundRoiArray;
 	private Roi[] boundaryBackgroundRoiArray;
 	private ArrayList<Roi> localBackgroundRois;
-	private double[] bodyMean;
+	private double[][] bodyMean;
 	private static final double defaultPixelW = 0.065; //Vasja's 63x objective
 	private static final Font labelFont = new Font(Font.MONOSPACED,Font.BOLD,14);
 	public boolean batch = false;
@@ -322,7 +322,7 @@ public class Filopodyan_ implements Command{
 		bodyRT.setPrecision(3);
 		bodyRT.showRowNumbers(false);
 		bodyRoiArr = new ShapeRoi[tEnd];
-		bodyMean = new double[tEnd];
+		bodyMean = new double[tEnd][C+1];
 		int ind = -1;	//index to use, incremented before adding a new track
 		for(int t=tStart;t<=tEnd;t++){
 			bgui.setLabel("mapping processes T"+t+"<br>"+title);
@@ -375,13 +375,18 @@ public class Filopodyan_ implements Command{
 			bodyRoiArr[t-1] = bodyRoi;
 			
 			Rectangle rr = bodyRoi.getBounds();
-			imp.setPosition(bgui.measureC,1,t);
-			imp.setRoi(bodyRoi);
-			ImageStatistics bodyStats = imp.getStatistics();
-			imp.setRoi(frameBackgroundRoiArray[t]);
-			ImageStatistics frameBackgroundStats = imp.getStatistics();
-			imp.setRoi(boundaryBackgroundRoiArray[t]);
-			ImageStatistics boundaryBackgroundStats = imp.getStatistics();
+			ImageStatistics[] bodyStats = new ImageStatistics[C+1];
+			ImageStatistics[] frameBackgroundStats = new ImageStatistics[C+1];
+			ImageStatistics[] boundaryBackgroundStats = new ImageStatistics[C+1];
+			for(int c=1;c<=C;c++){
+				imp.setPosition(c,1,t);
+				imp.setRoi(bodyRoi);
+				bodyStats[c] = imp.getStatistics();
+				imp.setRoi(frameBackgroundRoiArray[t]);
+				frameBackgroundStats[c] = imp.getStatistics();
+				imp.setRoi(boundaryBackgroundRoiArray[t]);
+				boundaryBackgroundStats[c] = imp.getStatistics();
+			}
 			imp.killRoi();
 			
 			int tablei = t-1;
@@ -394,14 +399,16 @@ public class Filopodyan_ implements Command{
 			bodyRT.setValue("T",tablei,t);
 			bodyRT.setValue("X",tablei,(rr.x+(rr.width/2))*pixelW);
 			bodyRT.setValue("Y",tablei,(rr.y+(rr.height/2))*pixelW);
-			bodyRT.setValue("Mean",tablei,bodyStats.mean);
-			bodyMean[t-1] = bodyStats.mean;
-			bodyRT.setValue("StdDev",tablei,bodyStats.stdDev);
-			bodyRT.setValue("Frame Background",tablei,frameBackgroundStats.mean);
-			bodyRT.setValue("Boundary Background",tablei,boundaryBackgroundStats.mean);
-			bodyRT.setValue("Body Area",tablei,bodyStats.area);
+			for(int c=1;c<=C;c++){
+				bodyRT.setValue("Mean C"+c,tablei,bodyStats[c].mean);
+				bodyMean[t-1][c] = bodyStats[c].mean;
+				bodyRT.setValue("StdDev C"+c,tablei,bodyStats[c].stdDev);
+				bodyRT.setValue("Frame Background C"+c,tablei,frameBackgroundStats[c].mean);
+				bodyRT.setValue("Boundary Background C"+c,tablei,boundaryBackgroundStats[c].mean);
+			}
+			bodyRT.setValue("Body Area",tablei,bodyStats[1].area);
 			bodyRT.setValue("Body Perimeter",tablei,bodyRoi.getLength());
-
+			
 			PointRoi bodyCentroid = new PointRoi(rr.x+(rr.width/2),rr.y+(rr.height/2));
 			
 			setRoiFrame(bodyCentroid, t);
@@ -409,35 +416,46 @@ public class Filopodyan_ implements Command{
 			ol.add(bodyCentroid);
 			
 			Roi[] split = projRoi.getRois();
-			imp.setPosition(bgui.measureC,1,t);
+			imp.setPosition(bgui.targetC,1,t);
 			if(bgui.verbose){bgui.log.print(title, "Processing "+split.length+" objects...");}
 			Tipper tipper = new Tipper();
 			for(int f=0;f<split.length;f++){
 				if(bgui.verbose){bgui.log.print(title, "Object "+f);}
 				if(onEdge(split[f])){continue;}
 				ind++;
+				double[] projMean = new double[C+1];
+				double[] baseMean = new double[C+1];
+				double[] tipMean = new double[C+1];
+				double[] tipThMean = new double[C+1];
 				
 				imp.setRoi(split[f]);
+				imp.setPosition(bgui.targetC,1,t);
 				double area = imp.getStatistics().area;
-				double projMean = imp.getStatistics().mean;
 				ShapeRoi grow = new ShapeRoi(RoiEnlargerHandler.enlarge(split[f],3));
 				ShapeRoi baseRoi = grow.and(bodyRoi);
 				setRoiFrame(baseRoi, t);
-				baseRoi.setStrokeColor(Color.YELLOW);
-				imp.setRoi(baseRoi);
-				double baseMean = imp.getStatistics().mean;		
+				baseRoi.setStrokeColor(Color.YELLOW);	
 				Rectangle rect = baseRoi.getBounds();
 				int baseX = rect.x+(rect.width/2);
 				int baseY = rect.y+(rect.height/2);
 				if(bgui.verbose){bgui.log.print(title, "Finding process tip");}
-				Roi tipRoi = tipper.findTip(imp,split[f],new Point(baseX,baseY),bgui.measureC,t,bgui.fit);
-				imp.setRoi(tipRoi);
-				double tipMean = imp.getStatistics().mean;
-				ImagePlus tipMeasure = dup.run(imp,bgui.measureC,bgui.measureC,1,1,t,t);
-				IJ.setAutoThreshold(tipMeasure, "Otsu dark stack");
-				IJ.run(tipMeasure, "Create Selection", "");
-				double tipThMean = tipMeasure.getStatistics().mean;	//mean of Otsu thresholded values in tip ROI			
-				tipMeasure.close();
+				Roi tipRoi = tipper.findTip(imp,split[f],new Point(baseX,baseY),bgui.targetC,t,bgui.fit);
+
+				for(int c=1;c<=C;c++){
+					imp.setRoi(split[f]);
+					imp.setPosition(c,1,t);
+					projMean[c] = imp.getStatistics().mean;
+					imp.setRoi(baseRoi);
+					baseMean[c] = imp.getStatistics().mean;		
+					imp.setRoi(tipRoi);
+					tipMean[c] = imp.getStatistics().mean;
+					ImagePlus tipMeasure = dup.run(imp,c,c,1,1,t,t);
+					IJ.setAutoThreshold(tipMeasure, "Otsu dark stack");
+					IJ.run(tipMeasure, "Create Selection", "");
+					tipThMean[c] = tipMeasure.getStatistics().mean;	//mean of Otsu thresholded values in tip ROI			
+					tipMeasure.close();
+				}
+				
 				setRoiFrame(tipRoi, t);
 				tipRoi.setStrokeColor(Color.GREEN);
 	
@@ -684,13 +702,13 @@ public class Filopodyan_ implements Command{
 					for(int i : trackIndices){
 						bgui.setLabel("analysing track "+i+"<br>"+title);
 						if(bgui.verbose){bgui.log.print(title, "Measuring track "+i);}
-						double[] baseMeanArr = new double[T];
-						double[] projMeanArr = new double[T];
-						double[] tipMeanArr = new double[T];
-						double[] tipThMeanArr = new double[T];
+						double[][] baseMeanArr = new double[T][C+1];
+						double[][] projMeanArr = new double[T][C+1];
+						double[][] tipMeanArr = new double[T][C+1];
+						double[][] tipThMeanArr = new double[T][C+1];
 
-						double[] localTipBackgroundArr = new double[T];
-						double[] localBaseBackgroundArr = new double[T];
+						double[][] localTipBackgroundArr = new double[T][C+1];
+						double[][] localBaseBackgroundArr = new double[T][C+1];
 
 						double[] lengthArr = new double[T];
 						double[] dlArr = new double[T];
@@ -711,16 +729,21 @@ public class Filopodyan_ implements Command{
 											dtArr[t] = 0;
 										}
 										else{dtArr[t] = t-start;}
-										baseMeanArr[t] = part.getBaseMean();
-										projMeanArr[t] = part.getProjMean();
-										tipMeanArr[t] = part.getTipMean();
-										tipThMeanArr[t] = part.getTipThMean();
+										for(int c=1;c<=C;c++){
+											baseMeanArr[t][c] = part.getBaseMean(c);
+											projMeanArr[t][c] = part.getProjMean(c);
+											tipMeanArr[t][c] = part.getTipMean(c);
+											tipThMeanArr[t][c] = part.getTipThMean(c);
+										}
 
-										imp.setPosition(bgui.measureC, 1, t);
+										imp.setPosition(bgui.targetC, 1, t);
 										Roi tipBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( part.getTip(), 5 )).xor( new ShapeRoi(part.getTip()) ).not( new ShapeRoi(part.getRoi()) ).not( new ShapeRoi(bodyRoiArr[t] ));
 										if(tipBackgroundRoi!=null){
 											imp.setRoi(tipBackgroundRoi);
-											localTipBackgroundArr[t] = imp.getStatistics().mean;
+											for(int c=1;c<=C;c++){
+												imp.setPosition(c,1,t);
+												localTipBackgroundArr[t][c] = imp.getStatistics().mean;
+											}
 											setRoiFrame(tipBackgroundRoi, t+1);
 											localBackgroundRois.add(tipBackgroundRoi);
 										}
@@ -730,10 +753,13 @@ public class Filopodyan_ implements Command{
 																											.xor( new ShapeRoi(part.getBase()) )
 																											.not( new ShapeRoi(part.getRoi()) )
 																											.not( new ShapeRoi(bodyRoiArr[t] ));
-										}catch(IllegalArgumentException iae){}	//ignore exception caused by zero area ShapeRoi, baseBackgroundRoi remains null
+										}catch(IllegalArgumentException iae){}	//ignore Exception caused by zero area ShapeRoi, baseBackgroundRoi remains null
 										if(baseBackgroundRoi!=null){
 											imp.setRoi(baseBackgroundRoi);
-											localBaseBackgroundArr[t] = imp.getStatistics().mean;
+											for(int c=1;c<=C;c++){
+												imp.setPosition(c,1,t);
+												localBaseBackgroundArr[t][c] = imp.getStatistics().mean;
+											}
 											setRoiFrame(baseBackgroundRoi, t);
 											localBackgroundRois.add(baseBackgroundRoi);
 										}
@@ -748,8 +774,8 @@ public class Filopodyan_ implements Command{
 										int backX = -1;
 										int backY = -1;
 										for(int back=-1;back>=bgui.backFrames;back--){
-											if(t+back>=0 && baseMeanArr[t+back]==0){
-												imp.setPosition(bgui.measureC,1,t+back+1);
+											if(t+back>=0 && baseMeanArr[t+back][bgui.targetC]==0){
+												imp.setPosition(bgui.targetC,1,t+back+1);
 												imp.setRoi(bodyRoiArr[t+back]);
 												IJ.run(imp, "Interpolate", "interval=1");
 												ShapeRoi bodyShape = new ShapeRoi(imp.getRoi());			
@@ -776,16 +802,21 @@ public class Filopodyan_ implements Command{
 												backBase.setLocation(backX,backY);
 												backBase = new ShapeRoi(backBase).and(bodyShape);
 												imp.setRoi(backBase);
-												ImageStatistics backStats = imp.getStatistics();
-												baseMeanArr[t+back] = backStats.mean;
+												for(int c=1;c<=C;c++){
+													imp.setPosition(c,1,t);
+													ImageStatistics backStats = imp.getStatistics();
+													baseMeanArr[t+back][c] = backStats.mean;
+												}
 												baseCoordArr[t+back] = new Point2d(backX*pixelW,backY*pixelW);
 												dtArr[t+back] = back;
 
 												baseBackgroundRoi = new ShapeRoi(RoiEnlargerHandler.enlarge( backBase, 5 )).xor( (ShapeRoi)backBase ).not( new ShapeRoi(bodyRoiArr[t+back] ));
 												if(baseBackgroundRoi!=null){
 													imp.setRoi(baseBackgroundRoi);
-													localBaseBackgroundArr[t+back] = imp.getStatistics().mean;
-
+													for(int c=1;c<=C;c++){
+														imp.setPosition(c,1,t);
+														localBaseBackgroundArr[t+back][c] = imp.getStatistics().mean;
+													}
 													setRoiFrame(baseBackgroundRoi, t+back+1);
 													localBackgroundRois.add(baseBackgroundRoi);
 												}
@@ -816,19 +847,23 @@ public class Filopodyan_ implements Command{
 								if(baseCoordArr[t]!=null){	//if it has a base or back-projected base at this t
 									filoRT.setValue("T ("+i+")",rtrow,ti);
 									filoRT.setValue("dT ("+i+")",rtrow,filoRT.getValue("dT",rtrow));	//duplicate column, user request
-									filoRT.setValue("Base Mean ("+i+")",rtrow,baseMeanArr[t]);
-									filoRT.setValue("Base Local Background ("+i+")",rtrow,localBaseBackgroundArr[t]);
-									filoRT.setValue("Body Mean ("+i+")",rtrow,bodyMean[t]);
+									for(int c=1;c<=C;c++){
+										filoRT.setValue("Base Mean C"+c+" ("+i+")",rtrow,baseMeanArr[t][c]);
+										filoRT.setValue("Base Local Background C"+c+" ("+i+")",rtrow,localBaseBackgroundArr[t][c]);
+										filoRT.setValue("Body Mean C"+c+" ("+i+")",rtrow,bodyMean[t][c]);
+									}
 									coordRT.setValue("T ("+i+")",ctrow,ti);
 									coordRT.setValue("Base X ("+i+")",ctrow,baseCoordArr[t].x);
 									coordRT.setValue("Base Y ("+i+")",ctrow,baseCoordArr[t].y);
 								}
 
 								if(tipCoordArr[t]!=null){	//if it has a tip at this t
-									filoRT.setValue("Proj Mean ("+i+")",rtrow,projMeanArr[t]);
-									filoRT.setValue("Tip Mean ("+i+")",rtrow,tipMeanArr[t]);
-									filoRT.setValue("Tip Th Mean ("+i+")",rtrow,tipThMeanArr[t]);
-									filoRT.setValue("Tip Local Background ("+i+")",rtrow,localTipBackgroundArr[t]);
+									for(int c=1;c<=C;c++){
+										filoRT.setValue("Proj Mean C"+c+" ("+i+")",rtrow,projMeanArr[t][c]);
+										filoRT.setValue("Tip Mean C"+c+" ("+i+")",rtrow,tipMeanArr[t][c]);
+										filoRT.setValue("Tip Th Mean C"+c+" ("+i+")",rtrow,tipThMeanArr[t][c]);
+										filoRT.setValue("Tip Local Background C"+c+" ("+i+")",rtrow,localTipBackgroundArr[t][c]);
+									}
 									filoRT.setValue("Length ("+i+")",rtrow,lengthArr[t]);
 									filoRT.setValue("dL ("+i+")",rtrow,dlArr[t]);
 
@@ -872,13 +907,13 @@ public class Filopodyan_ implements Command{
 									if(filoRT.getValue("dT",r)==0&&(head[c].startsWith("dT")||head[c].startsWith("T ("))){continue;}
 									if(head[c].startsWith("DC")&&filoRT.getValue("dT",r)>0){
 										int track = Integer.valueOf(head[c].substring(head[c].indexOf("(")+1,head[c].indexOf(")")));
-										if(!Double.isNaN(filoRT.getValue("Body Mean ("+track+")",r))){
+										if(!Double.isNaN(filoRT.getValue("Body Mean C"+bgui.targetC+" ("+track+")",r))){
 											continue;
 										}
 									}
 									if(head[c].startsWith("T (")){
 										int track = Integer.valueOf( head[c].substring( head[c].indexOf("(")+1, head[c].indexOf(")") ) );
-										if(!Double.isNaN(filoRT.getValue("Body Mean ("+track+")",r))&&(filoRT.getValue("Body Mean ("+track+")",r)!=0)){
+										if(!Double.isNaN(filoRT.getValue("Body Mean C"+bgui.targetC+" ("+track+")",r))&&(filoRT.getValue("Body Mean C"+bgui.targetC+" ("+track+")",r)!=0)){
 											continue;
 										}
 									}
@@ -957,7 +992,10 @@ public class Filopodyan_ implements Command{
 				}
 			};
 			worker.execute();
-		}catch(Exception e){IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));}
+		}catch(Exception e){
+			e.printStackTrace();
+			IJ.log(e.toString()+"\n~~~~~\n"+Arrays.toString(e.getStackTrace()).replace(",","\n"));
+		}
 	}
 
 	/** Checks if an image has been set for analysis.
@@ -1042,6 +1080,7 @@ public class Filopodyan_ implements Command{
 	    }*/
 		
 		ImageJ.main(arg);
+		
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\t1ol_bug_20180129\\NeonENA_GC4_huang4-01_ed4_small.tif");
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\growth-cone-test-file.tif");
 		//ImagePlus img = new ImagePlus("E:\\test data\\growthcones\\GCtest.tif");
@@ -1049,8 +1088,10 @@ public class Filopodyan_ implements Command{
 		
 		//ImagePlus img = new ImagePlus("E:\\Vasja\\processing_testers\\d1_NeonENA_GC2-_RedDenoised_Renamed-tip_test.tif");
 		
-		ImagePlus img = new ImagePlus("E:\\Alexander_Rohrbach\\100frames_duplicate_Figure3_Cut-2.tif");
+		//ImagePlus img = new ImagePlus("E:\\Alexander_Rohrbach\\100frames_duplicate_Figure3_Cut-2.tif");
 		//ImagePlus img = new ImagePlus("E:\\Alexander_Rohrbach\\100_frames_duplicate_Figure3_Cut.tif - deconvolution-1p-Median-1.tif");
+		
+		ImagePlus img = new ImagePlus("E:\\Tom\\Tom_files\\3Ctest.tif");
 		
 		final ImagePlus image = HyperStackConverter.toHyperStack(img, img.getNChannels(), 1, img.getNFrames());
 		image.setDisplayMode(IJ.GRAYSCALE);
